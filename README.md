@@ -36,7 +36,7 @@ These tools are defined in `app/tools.py` and are decorated with the `@tool` dec
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/jigs1188/ChatBot
     cd snello
     ```
 

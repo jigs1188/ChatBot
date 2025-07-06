@@ -1,14 +1,17 @@
 # Snello - Your Personal AI Assistant
 
-Snello is a command-line chatbot that helps you manage your to-do list. It's built with Python, LangChain, and Google's Gemini API. Snello is designed to be a simple, yet powerful, example of an AI agent that can understand and respond to your requests in a conversational way.
+Snello is a web-based chatbot that helps you manage your to-do list. It's built with Python, Flask, LangChain, and Google's Gemini API. Snello is designed to be a simple, yet powerful, example of an AI agent that can understand and respond to your requests in a conversational way.
 
 ## Architecture
 
 The application follows a simple agentic architecture based on the LangChain library. Here's a breakdown of the components:
 
-- **main.py**: The entry point of the application. It handles the command-line interface (CLI), manages the conversation history, and invokes the agent.
+- **main.py**: The entry point of the application. It runs a Flask web server that serves the web interface and handles user prompts.
 - **app/agent.py**: This is the core of the agent. It defines the LLM, the tools, the prompt, and the agent executor.
 - **app/tools.py**: This module contains the tools that the agent can use to interact with the outside world. In this case, it has tools for adding, removing, and listing to-do items.
+- **templates/index.html**: The HTML file for the web interface.
+- **static/style.css**: The CSS file for styling the web interface.
+- **static/script.js**: The JavaScript file for handling user interactions in the web interface.
 - **.env**: This file stores the `GOOGLE_API_KEY` required to use the Gemini API.
 - **todolist.json**: This file is used to persist the to-do list.
 
@@ -57,20 +60,15 @@ These tools are defined in `app/tools.py` and are decorated with the `@tool` dec
     python main.py
     ```
 
-## Example Prompts
+5.  **Open the web interface:**
+    Open your web browser and go to `http://127.0.0.1:5000`.
 
-Here are some examples of how you can interact with Snello:
+## Deployment
 
--   `Hello, my name is [Your Name]`
--   `Add "buy groceries" to my to-do list`
--   `What's on my to-do list?`
--   `Add "finish the report" to my list`
--   `Can you remove "buy groceries" from my list?`
--   `Show me my to-dos`
+[Instructions for deployment will be added here.]
 
 ## Limitations and Future Improvements
 
 -   **In-Memory Chat History**: The conversation history is currently stored in-memory, which means it will be lost when the application is closed. A future improvement would be to persist the chat history to a file or a database.
 -   **Error Handling**: The error handling is basic. More robust error handling could be added to handle cases like invalid API keys or network issues.
--   **Web Interface**: The current interface is a command-line interface. A web interface could be built to provide a more user-friendly experience.
 -   **More Tools**: The agent could be extended with more tools, such as the ability to set reminders or integrate with other applications.

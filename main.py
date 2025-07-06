@@ -1,40 +1,31 @@
-
+from flask import Flask, render_template, request, jsonify
 from app.agent import agent_executor
 from langchain_core.messages import HumanMessage, AIMessage
+
+app = Flask(__name__)
 
 # In-memory store for conversation history
 chat_history = []
 
-def main():
-    """Main function to run the chatbot CLI."""
-    print("Welcome to Snello! Your personal AI assistant.")
-    print("You can ask me to manage your to-do list or just chat.")
-    print("Type 'exit' to end the conversation.")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    while True:
-        try:
-            user_input = input("\nYou: ")
-            if user_input.lower() == 'exit':
-                print("Goodbye!")
-                break
+@app.route('/prompt', methods=['POST'])
+def prompt():
+    user_input = request.json['prompt']
+    
+    # Invoke the agent with the user input and chat history
+    response = agent_executor.invoke({
+        "input": user_input,
+        "chat_history": chat_history
+    })
 
-            # Invoke the agent with the user input and chat history
-            response = agent_executor.invoke({
-                "input": user_input,
-                "chat_history": chat_history
-            })
+    # Append the conversation to history
+    chat_history.append(HumanMessage(content=user_input))
+    chat_history.append(AIMessage(content=response["output"]))
 
-            # Append the conversation to history
-            chat_history.append(HumanMessage(content=user_input))
-            chat_history.append(AIMessage(content=response["output"]))
+    return jsonify({'response': response['output']})
 
-            print(f"\nSnello: {response['output']}")
-
-        except KeyboardInterrupt:
-            print("\nGoodbye!")
-            break
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    app.run(debug=True)

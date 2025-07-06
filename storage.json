@@ -272,6 +272,48 @@
             "tool_calls": [],
             "invalid_tool_calls": [],
             "usage_metadata": null
+        },
+        {
+            "content": "hi",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "Hi Jignesh!  What can I do for you today?\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        },
+        {
+            "content": "show my list",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "Here is your to-do list, Jignesh:\n\n1. neha and me are dating\n2. she is a beautiful person\n\nLet me know if you want to add, remove, or change anything.\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
         }
     ],
     "todo_list": []

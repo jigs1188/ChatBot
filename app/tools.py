@@ -3,15 +3,18 @@ import json
 from langchain_core.tools import tool
 from typing import List
 
-TODO_FILE = "todolist.json"
+STORAGE_FILE = "storage.json"
 
-def get_todos() -> List[str]:
-    """Reads the to-do list from the JSON file."""
+def load_storage():
     try:
-        with open(TODO_FILE, "r") as f:
+        with open(STORAGE_FILE, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        return []
+        return {'conversation_history': [], 'todo_list': []}
+
+def save_storage(data):
+    with open(STORAGE_FILE, 'w') as f:
+        json.dump(data, f, indent=4)
 
 @tool
 def add_todo(todo: str):
@@ -20,10 +23,9 @@ def add_todo(todo: str):
     Args:
         todo: The task to add to the list.
     """
-    todos = get_todos()
-    todos.append(todo)
-    with open(TODO_FILE, "w") as f:
-        json.dump(todos, f, indent=4)
+    storage = load_storage()
+    storage['todo_list'].append(todo)
+    save_storage(storage)
     return f"Successfully added '{todo}' to your to-do list."
 
 @tool
@@ -33,11 +35,10 @@ def remove_todo(todo_index: int):
     Args:
         todo_index: The 1-based index of the task to remove.
     """
-    todos = get_todos()
-    if 0 < todo_index <= len(todos):
-        removed_todo = todos.pop(todo_index - 1)
-        with open(TODO_FILE, "w") as f:
-            json.dump(todos, f, indent=4)
+    storage = load_storage()
+    if 0 < todo_index <= len(storage['todo_list']):
+        removed_todo = storage['todo_list'].pop(todo_index - 1)
+        save_storage(storage)
         return f"Successfully removed '{removed_todo}' from your to-do list."
     return "Error: Invalid index. Please provide a valid number from the list."
 
@@ -46,9 +47,9 @@ def list_todos():
     """
     Lists all items currently in the to-do list.
     """
-    todos = get_todos()
-    if not todos:
+    storage = load_storage()
+    if not storage['todo_list']:
         return "Your to-do list is empty."
     
-    formatted_list = "\n".join(f"{i+1}. {todo}" for i, todo in enumerate(todos))
+    formatted_list = "\n".join(f"{i+1}. {todo}" for i, todo in enumerate(storage['todo_list']))
     return f"Here is your current to-do list:\n{formatted_list}"

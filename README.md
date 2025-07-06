@@ -19,15 +19,11 @@ The agent uses a tool-calling approach, where the LLM can decide to call one of 
 
 ## Memory
 
-Snello has two types of memory:
-
-1.  **Conversation History**: The conversation history is stored in-memory as a list of messages. This allows the agent to remember previous turns in the conversation and respond in a more context-aware way. The history is passed to the agent with each new user input.
-
-2.  **To-Do List**: The to-do list is persisted in a JSON file named `todolist.json`. The `app/tools.py` module contains functions for reading from and writing to this file, ensuring that your to-do list is saved even after you close the application.
+Snello persists both conversation history and the to-do list in a single JSON file named `storage.json`. This ensures that your conversations and to-do items are saved even after the application is closed.
 
 ## Tools
 
-The agent has access to the following tools:
+The agent has access to the following tools, which interact with the `storage.json` file:
 
 - **`add_todo(todo: str)`**: Adds a new item to the to-do list.
 - **`remove_todo(todo_index: int)`**: Removes an item from the to-do list by its index.
@@ -63,12 +59,7 @@ These tools are defined in `app/tools.py` and are decorated with the `@tool` dec
 5.  **Open the web interface:**
     Open your web browser and go to `http://127.0.0.1:5000`.
 
-## Deployment
-
-[Instructions for deployment will be added here.]
-
 ## Limitations and Future Improvements
 
--   **In-Memory Chat History**: The conversation history is currently stored in-memory, which means it will be lost when the application is closed. A future improvement would be to persist the chat history to a file or a database.
 -   **Error Handling**: The error handling is basic. More robust error handling could be added to handle cases like invalid API keys or network issues.
 -   **More Tools**: The agent could be extended with more tools, such as the ability to set reminders or integrate with other applications.

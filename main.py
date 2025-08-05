@@ -39,4 +39,4 @@ def prompt():
     return jsonify({'response': response['output']})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

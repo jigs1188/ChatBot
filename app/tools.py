@@ -1,19 +1,12 @@
 import json
+import redis
 from langchain_core.tools import tool
 from typing import List
+import os
 
-STORAGE_FILE = "storage.json"
-
-def load_storage():
-    try:
-        with open(STORAGE_FILE, 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {'conversation_history': [], 'todo_list': []}
-
-def save_storage(data):
-    with open(STORAGE_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+# Connect to Redis
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(redis_url)
 
 @tool
 def add_todo(todo: str):
@@ -22,9 +15,7 @@ def add_todo(todo: str):
     Args:
         todo: The task to add to the list.
     """
-    storage = load_storage()
-    storage['todo_list'].append(todo)
-    save_storage(storage)
+    r.rpush("todo_list", todo)
     return f"Successfully added '{todo}' to your to-do list."
 
 @tool
@@ -34,10 +25,9 @@ def remove_todo(todo_index: int):
     Args:
         todo_index: The 1-based index of the task to remove.
     """
-    storage = load_storage()
-    if 0 < todo_index <= len(storage['todo_list']):
-        removed_todo = storage['todo_list'].pop(todo_index - 1)
-        save_storage(storage)
+    if 0 < todo_index <= r.llen("todo_list"):
+        removed_todo = r.lindex("todo_list", todo_index - 1).decode("utf-8")
+        r.lrem("todo_list", 1, r.lindex("todo_list", todo_index - 1))
         return f"Successfully removed '{removed_todo}' from your to-do list."
     return "Error: Invalid index. Please provide a valid number from the list."
 
@@ -46,11 +36,11 @@ def list_todos():
     """
     Lists all items currently in the to-do list.
     """
-    storage = load_storage()
-    if not storage['todo_list']:
+    todo_list = [item.decode("utf-8") for item in r.lrange("todo_list", 0, -1)]
+    if not todo_list:
         return "Your to-do list is empty."
     
-    formatted_list = "\n".join(f"{i+1}. {todo}" for i, todo in enumerate(storage['todo_list']))
+    formatted_list = "\n".join(f"{i+1}. {todo}" for i, todo in enumerate(todo_list))
     return f"Here is your current to-do list:\n{formatted_list}"
 
 @tool
@@ -60,7 +50,5 @@ def save_user_name(name: str):
     Args:
         name: The user's name.
     """
-    storage = load_storage()
-    storage['user_name'] = name
-    save_storage(storage)
+    r.set("user_name", name)
     return f"Thanks, {name}! I'll remember that."

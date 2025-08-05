@@ -1,20 +1,15 @@
 import json
+import redis
+import os
 from flask import Flask, render_template, request, jsonify
 from app.agent import agent_executor
 from langchain_core.messages import HumanMessage, AIMessage
 
 app = Flask(__name__)
 
-def load_storage():
-    try:
-        with open('storage.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {'conversation_history': [], 'todo_list': []}
-
-def save_storage(data):
-    with open('storage.json', 'w') as f:
-        json.dump(data, f, indent=4)
+# Connect to Redis
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(redis_url)
 
 @app.route('/')
 def index():
@@ -23,18 +18,24 @@ def index():
 @app.route('/prompt', methods=['POST'])
 def prompt():
     user_input = request.json['prompt']
-    storage = load_storage()
-    chat_history = [HumanMessage(**msg) if msg['type'] == 'human' else AIMessage(**msg) for msg in storage['conversation_history']]
+    
+    # Load chat history from Redis
+    chat_history_json = r.get("chat_history")
+    chat_history = []
+    if chat_history_json:
+        chat_history_list = json.loads(chat_history_json)
+        chat_history = [HumanMessage(**msg) if msg['type'] == 'human' else AIMessage(**msg) for msg in chat_history_list]
 
     response = agent_executor.invoke({
         "input": user_input,
         "chat_history": chat_history
     })
 
+    # Save chat history to Redis
     chat_history.append(HumanMessage(content=user_input))
     chat_history.append(AIMessage(content=response["output"]))
-    storage['conversation_history'] = [msg.dict() for msg in chat_history]
-    save_storage(storage)
+    chat_history_list = [msg.dict() for msg in chat_history]
+    r.set("chat_history", json.dumps(chat_history_list))
 
     return jsonify({'response': response['output']})
 

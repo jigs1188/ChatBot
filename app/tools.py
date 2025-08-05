@@ -52,3 +52,15 @@ def list_todos():
     
     formatted_list = "\n".join(f"{i+1}. {todo}" for i, todo in enumerate(storage['todo_list']))
     return f"Here is your current to-do list:\n{formatted_list}"
+
+@tool
+def save_user_name(name: str):
+    """
+    Saves the user's name.
+    Args:
+        name: The user's name.
+    """
+    storage = load_storage()
+    storage['user_name'] = name
+    save_storage(storage)
+    return f"Thanks, {name}! I'll remember that."

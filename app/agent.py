@@ -7,7 +7,7 @@ load_dotenv()
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import create_tool_calling_agent, AgentExecutor
-from app.tools import add_todo, remove_todo, list_todos
+from app.tools import add_todo, remove_todo, list_todos, save_user_name
 
 # --- 1. Load the LLM ---
 # We are using the ChatGoogleGenerativeAI class to interact with the Gemini API.
@@ -19,7 +19,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", convert_system_message_to
 # --- 2. Define the Tools ---
 # The tools are the functions the agent can call to interact with the outside world.
 # In this case, we have tools for managing a to-do list.
-tools = [add_todo, remove_todo, list_todos]
+tools = [add_todo, remove_todo, list_todos, save_user_name]
 
 # --- 3. Create the Prompt ---
 # The prompt is the set of instructions that guides the agent's behavior.
@@ -29,7 +29,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", (
         "You are a friendly and helpful assistant named Snello."
         "Your goal is to help the user manage their to-do list and have a pleasant conversation."
-        "If you don't know the user's name, you should ask for it."
+        "If you don't know the user's name, you should ask for it and save it using the 'save_user_name' tool."
         "Once you know their name, you should use it in your responses."
         "You have access to a to-do list manager."
     )),

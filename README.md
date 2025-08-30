@@ -60,7 +60,13 @@ Test
 ## Configuration
 
 Environment Variables
-Create a `.env` file in the root directory:
+Copy `.env.example` to `.env` and fill in your actual values:
+```bash
+cp .env.example .env
+# Edit .env with your actual API keys
+```
+
+Example `.env` file:
 ```env
 GOOGLE_API_KEY=your_gemini_api_key_here
 REDIS_URL=redis://localhost:6379

@@ -1,65 +1,157 @@
-# Snello - Your Personal AI Assistant
+# ChatBot
 
-Snello is a web-based chatbot that helps you manage your to-do list. It's built with Python, Flask, LangChain, and Google's Gemini API. Snello is designed to be a simple, yet powerful, example of an AI agent that can understand and respond to your requests in a conversational way.
+A conversational AI assistant (Snello) that helps manage to-do lists through natural language interaction using Flask, LangChain, and Google's Gemini API.
 
-## Architecture
+[![Stars](https://img.shields.io/github/stars/jigs1188/ChatBot)](https://github.com/jigs1188/ChatBot/stargazers)
+[![Issues](https://img.shields.io/github/issues/jigs1188/ChatBot)](https://github.com/jigs1188/ChatBot/issues)
 
-The application follows a simple agentic architecture based on the LangChain library. Here's a breakdown of the components:
+## Features
+- Natural language conversation interface with AI assistant
+- To-do list management through chat commands (add, remove, list tasks)
+- Persistent storage of conversation history and tasks
+- Tool-calling capabilities with LangChain agents
+- Redis-based session management for scalability
+- Web-based chat interface with real-time responses
+- Google Gemini 1.5 Flash integration for intelligent responses
 
-- **main.py**: The entry point of the application. It runs a Flask web server that serves the web interface and handles user prompts.
-- **app/agent.py**: This is the core of the agent. It defines the LLM, the tools, the prompt, and the agent executor.
-- **app/tools.py**: This module contains the tools that the agent can use to interact with the outside world. In this case, it has tools for adding, removing, and listing to-do items.
-- **templates/index.html**: The HTML file for the web interface.
-- **static/style.css**: The CSS file for styling the web interface.
-- **static/script.js**: The JavaScript file for handling user interactions in the web interface.
-- **.env**: This file stores the `GOOGLE_API_KEY` required to use the Gemini API.
-- **todolist.json**: This file is used to persist the to-do list.
+## Tech Stack
+- **Backend**: Python 3, Flask
+- **AI Framework**: LangChain, Google Gemini 1.5 Flash API
+- **Storage**: Redis (for session data), JSON (local storage)
+- **Frontend**: HTML, CSS, JavaScript
+- **Deployment**: Gunicorn, Render.com ready
+- **Dependencies**: python-dotenv, langchain-google-genai, redis, rq
 
-The agent uses a tool-calling approach, where the LLM can decide to call one of the provided tools to fulfill a user's request. The `AgentExecutor` manages the flow of the conversation, passing the user's input to the agent and executing any tool calls that the agent decides to make.
+## Getting Started
 
-## Memory
+Prerequisites
+- Python 3.7+ and pip
+- Redis server (local or cloud)
+- Google API key for Gemini
 
-Snello persists both conversation history and the to-do list in a single JSON file named `storage.json`. This ensures that your conversations and to-do items are saved even after the application is closed.
+Install
+```bash
+git clone https://github.com/jigs1188/ChatBot
+cd ChatBot
+pip install -r requirements.txt
+```
 
-## Tools
+Run
+```bash
+# Development (local)
+python main.py
 
-The agent has access to the following tools, which interact with the `storage.json` file:
+# Production (with Gunicorn)
+gunicorn main:app
+```
 
-- **`add_todo(todo: str)`**: Adds a new item to the to-do list.
-- **`remove_todo(todo_index: int)`**: Removes an item from the to-do list by its index.
-- **`list_todos()`**: Lists all items currently in the to-do list.
+Build
+```bash
+# No build step required for Python Flask application
+# Dependencies are installed via pip
+```
 
-These tools are defined in `app/tools.py` and are decorated with the `@tool` decorator from LangChain. This decorator makes the functions available to the agent, and the docstrings of the functions are used by the LLM to determine when and how to use them.
+Test
+```bash
+# No formal test suite currently available
+# Manual testing via web interface at http://127.0.0.1:5000
+```
 
-## Setup and Run
+## Configuration
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/jigs1188/ChatBot
-    cd snello
-    ```
+Environment Variables
+Create a `.env` file in the root directory:
+```env
+GOOGLE_API_KEY=your_gemini_api_key_here
+REDIS_URL=redis://localhost:6379
+```
 
-2.  **Install the dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+Google Gemini API Setup
+1. Visit [Google AI Studio](https://makersuite.google.com/)
+2. Create a new API key
+3. Add it to your `.env` file
+4. Never commit real API keys to public repositories
 
-3.  **Set up your API key:**
-    -   Create a file named `.env` in the root of the project.
-    -   Add the following line to the `.env` file, replacing `"YOUR_API_KEY_HERE"` with your actual Google API key:
-        ```
-        GOOGLE_API_KEY="YOUR_API_KEY_HERE"
-        ```
+Redis Configuration
+- Local development: Install Redis and run `redis-server`
+- Production: Use Redis service (Redis Cloud, AWS ElastiCache, etc.)
+- The app will connect using the `REDIS_URL` environment variable
 
-4.  **Run the application:**
-    ```bash
-    python main.py
-    ```
+## Project Structure
+```
+.
+├── main.py                 # Flask application entry point
+├── app/
+│   ├── __init__.py
+│   ├── agent.py           # LangChain agent setup and LLM configuration
+│   └── tools.py           # Custom tools (add_todo, remove_todo, etc.)
+├── templates/
+│   └── index.html         # Web chat interface
+├── static/
+│   ├── script.js          # Frontend JavaScript for chat functionality
+│   └── style.css          # Chat interface styling
+├── storage.json           # Local JSON storage for conversation history
+├── requirements.txt       # Python dependencies
+├── Procfile              # Heroku/render deployment config
+├── render.yaml           # Render.com deployment config
+└── README.md
+```
 
-5.  **Open the web interface:**
-    Open your web browser and go to `http://127.0.0.1:5000`.
+## Usage
 
-## Limitations and Future Improvements
+Development
+1. Start Redis server: `redis-server`
+2. Run the Flask app: `python main.py`
+3. Open browser to `http://127.0.0.1:5000`
+4. Chat with Snello to manage your to-do list
 
--   **Error Handling**: The error handling is basic. More robust error handling could be added to handle cases like invalid API keys or network issues.
--   **More Tools**: The agent could be extended with more tools, such as the ability to set reminders or integrate with other applications.
+Production Deployment
+- **Render.com**: Configured via `render.yaml`
+- **Heroku**: Configured via `Procfile`
+- Ensure environment variables are set in your deployment platform
+
+Example Conversation
+```
+You: Hi there!
+Snello: Hi! I'm Snello, your friendly to-do list assistant. What's your name?
+
+You: My name is John. Can you add "Buy groceries" to my to-do list?
+Snello: Nice to meet you, John! I've added "Buy groceries" to your to-do list.
+
+You: What's on my list?
+Snello: Here's your current to-do list:
+1. Buy groceries
+```
+
+## Troubleshooting
+- **API Quota Exceeded**: Google Gemini free tier has daily limits. Upgrade to paid tier or wait for quota reset
+- **Redis Connection Error**: Ensure Redis server is running locally or check REDIS_URL in production
+- **Module Import Errors**: Run `pip install -r requirements.txt` to install all dependencies
+- **CORS/Frontend Issues**: Clear browser cache and restart Flask development server
+- **Environment Variables Not Loading**: Verify `.env` file exists and contains valid API keys
+- **Chat Not Responding**: Check browser console for JavaScript errors and Flask logs for backend issues
+
+## Roadmap
+- [ ] Add unit and integration tests
+- [ ] Implement user authentication and multi-user support
+- [ ] Add more sophisticated task management (due dates, priorities)
+- [ ] Integrate with external calendar APIs
+- [ ] Add voice input/output capabilities
+- [ ] Implement streaming responses for better UX
+
+## Contributing
+Issues and PRs are welcome. Please keep changes small and focused with helpful descriptions and screenshots for UI changes.
+
+Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with appropriate documentation
+4. Ensure the app still runs locally
+5. Submit a pull request
+
+## License
+No license specified. Consider adding a LICENSE file (e.g., MIT, GPL) to clarify usage permissions.
+
+## Contact
+- Jignesh Parmar (jigs1188) — parmarjigs1188@gmail.com
+- GitHub: [@jigs1188](https://github.com/jigs1188)

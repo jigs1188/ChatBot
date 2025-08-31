@@ -112,3 +112,7 @@ agent_executor = AgentExecutor(
     tools=tools,
     verbose=True # Set to True to see the agent's thought process
 )
+
+def get_agent_executor():
+    """Return the configured agent executor"""
+    return agent_executor

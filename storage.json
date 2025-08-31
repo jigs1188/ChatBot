@@ -1,0 +1,13 @@
+{
+  "conversation_history": [],
+  "user_name": null,
+  "analytics": {
+    "total_tasks_created": 0,
+    "total_tasks_completed": 0,
+    "total_conversations": 0,
+    "most_productive_day": null,
+    "average_tasks_per_day": 0,
+    "completion_rate": 0,
+    "last_activity": null
+  }
+}

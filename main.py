@@ -8,6 +8,9 @@ import traceback
 from dotenv import load_dotenv
 load_dotenv()
 
+# Import the agent system
+from app.agent import get_agent_executor
+
 app = Flask(__name__)
 
 # File-based storage for chat history
@@ -43,56 +46,22 @@ def save_chat_history(chat_history):
     except Exception as e:
         print(f"Error saving chat history: {e}")
 
-# Initialize DeepSeek directly
-def get_deepseek_response(user_input):
-    """Get response from DeepSeek via OpenRouter"""
+def get_ai_response(user_input):
+    """Get response from AI agent with tools"""
     try:
-        import requests
+        # Get the agent executor
+        agent_executor = get_agent_executor()
         
-        openrouter_key = os.getenv("OPENROUTER_API_KEY")
-        if not openrouter_key:
-            return "Please configure your OpenRouter API key to enable AI responses."
+        if not agent_executor:
+            return "Please configure your API key to enable AI responses."
         
-        headers = {
-            "Authorization": f"Bearer {openrouter_key}",
-            "HTTP-Referer": "https://rex-ai.com",
-            "X-Title": "Rex AI Assistant",
-            "Content-Type": "application/json"
-        }
+        # Use the agent to process the input
+        result = agent_executor.invoke({"input": user_input})
+        return result.get("output", "Sorry, I couldn't process that request.")
         
-        data = {
-            "model": "deepseek/deepseek-chat",
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are Rex AI, a helpful and friendly personal assistant. You help users with tasks, answer questions, and provide useful information. Keep responses concise and helpful."
-                },
-                {
-                    "role": "user",
-                    "content": user_input
-                }
-            ],
-            "temperature": 0.7,
-            "max_tokens": 1500
-        }
-        
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=data,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            result = response.json()
-            return result['choices'][0]['message']['content']
-        else:
-            print(f"OpenRouter API error: {response.status_code} - {response.text}")
-            return f"Sorry, I encountered an error (Status: {response.status_code}). Please try again."
-            
     except Exception as e:
-        print(f"Error calling DeepSeek API: {e}")
-        return f"Sorry, I'm having trouble connecting right now. Please try again later. Error: {str(e)}"
+        print(f"Error calling AI agent: {e}")
+        return f"Sorry, I'm having trouble connecting right now. Please try again later."
 
 @app.route('/')
 def index():
@@ -135,15 +104,17 @@ def prompt():
         chat_history = load_chat_history()
         print(f"💾 Loaded {len(chat_history)} previous messages")
 
-        # Get response from DeepSeek directly
-        print("🤖 Calling DeepSeek API...")
-        ai_response = get_deepseek_response(user_input)
-        print(f"✅ DeepSeek response received: {ai_response[:100]}...")
+        # Get response from AI agent with tools
+        print("🤖 Calling AI agent...")
+        ai_response = get_ai_response(user_input)
+        print(f"✅ AI response received: {ai_response[:100]}...")
 
         # Save updated chat history to file
         print("💾 Saving chat history...")
-        chat_history.append({"role": "user", "content": user_input, "timestamp": str(pd.Timestamp.now()) if 'pd' in globals() else "now"})
-        chat_history.append({"role": "assistant", "content": ai_response, "timestamp": str(pd.Timestamp.now()) if 'pd' in globals() else "now"})
+        from datetime import datetime
+        timestamp = datetime.now().isoformat()
+        chat_history.append({"role": "user", "content": user_input, "timestamp": timestamp})
+        chat_history.append({"role": "assistant", "content": ai_response, "timestamp": timestamp})
         save_chat_history(chat_history)
         print("✅ Chat history saved")
 
@@ -173,12 +144,16 @@ def service_worker():
 def debug_info():
     """Debug endpoint to check app status"""
     try:
+        google_key = os.getenv('GOOGLE_API_KEY')
+        openrouter_key = os.getenv('OPENROUTER_API_KEY')
+        api_configured = bool(google_key or openrouter_key)
+        
         return jsonify({
             'status': 'OK',
             'message': 'All systems operational',
-            'version': '1.1.0',
-            'features': ['DeepSeek V3.1', 'Mobile-First', 'PWA'],
-            'api_configured': bool(os.getenv("OPENROUTER_API_KEY")),
+            'version': '2.0.0',
+            'features': ['AI Assistant', 'Todo Management', 'Mobile-First', 'PWA'],
+            'api_configured': api_configured,
             'endpoints': ['/prompt', '/api/debug', '/health']
         }), 200
     except Exception as e:
@@ -198,7 +173,10 @@ if __name__ == '__main__':
     debug = os.environ.get('FLASK_ENV') != 'production'
     
     print("🚀 Starting Rex AI Assistant...")
-    print(f"✅ DeepSeek API Key: {'✅ Configured' if os.getenv('OPENROUTER_API_KEY') else '❌ Missing'}")
+    google_key = os.getenv('GOOGLE_API_KEY')
+    openrouter_key = os.getenv('OPENROUTER_API_KEY')
+    api_configured = bool(google_key or openrouter_key)
+    print(f"✅ API Key: {'✅ Configured' if api_configured else '❌ Missing'}")
     print(f"🌐 Server starting on http://127.0.0.1:{port}")
     
     app.run(host='0.0.0.0', port=port, debug=debug)

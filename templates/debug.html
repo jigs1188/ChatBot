@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Snello AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-info { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border-left: 4px solid #ff0000; }
+        .success { background: #e6ffe6; border-left: 4px solid #00ff00; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .test-btn { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Snello AI Debug Page</h1>
+    
+    <div class="debug-info">
+        <h3>App Status</h3>
+        <p>Server Status: <span id="server-status">Checking...</span></p>
+        <p>API Status: <span id="api-status">Checking...</span></p>
+        <p>JavaScript Status: <span id="js-status">Checking...</span></p>
+    </div>
+
+    <div class="debug-info">
+        <h3>Quick Tests</h3>
+        <button class="test-btn" onclick="testAPI()">Test API</button>
+        <button class="test-btn" onclick="testMessage()">Test Message</button>
+        <button class="test-btn" onclick="loadMainApp()">Load Main App</button>
+    </div>
+
+    <div id="test-results"></div>
+
+    <script>
+        document.getElementById('js-status').textContent = 'Working ✅';
+        
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.json();
+                document.getElementById('api-status').textContent = 'Working ✅';
+                showResult('API Test Success', JSON.stringify(data, null, 2), 'success');
+            } catch (error) {
+                document.getElementById('api-status').textContent = 'Failed ❌';
+                showResult('API Test Failed', error.message, 'error');
+            }
+        }
+
+        async function testMessage() {
+            const testMessage = "Hello DeepSeek! Can you respond with a simple greeting?";
+            try {
+                showResult('Sending Test Message', `Testing with: "${testMessage}"`, 'success');
+                
+                const response = await fetch('/prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: testMessage })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('AI Response Received', data.response || 'No response', 'success');
+            } catch (error) {
+                showResult('Message Test Failed', error.message, 'error');
+            }
+        }
+
+        function loadMainApp() {
+            window.location.href = '/';
+        }
+
+        function showResult(title, content, type) {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `debug-info ${type}`;
+            div.innerHTML = `<h4>${title}</h4><pre>${content}</pre>`;
+            results.appendChild(div);
+        }
+
+        // Check server status
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('server-status').textContent = 'Working ✅';
+            })
+            .catch(error => {
+                document.getElementById('server-status').textContent = 'Failed ❌';
+            });
+    </script>
+</body>
+</html>

@@ -55,8 +55,8 @@ def get_deepseek_response(user_input):
         
         headers = {
             "Authorization": f"Bearer {openrouter_key}",
-            "HTTP-Referer": "https://rex-ai.com",
-            "X-Title": "Rex AI Assistant",
+            "HTTP-Referer": "https://snello-ai.com",
+            "X-Title": "Snello AI Assistant",
             "Content-Type": "application/json"
         }
         
@@ -65,7 +65,7 @@ def get_deepseek_response(user_input):
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are Rex AI, a helpful and friendly personal assistant. You help users with tasks, answer questions, and provide useful information. Keep responses concise and helpful."
+                    "content": "You are Snello AI, a helpful and friendly personal assistant. You help users with tasks, answer questions, and provide useful information. Keep responses concise and helpful."
                 },
                 {
                     "role": "user",
@@ -157,7 +157,7 @@ def prompt():
 @app.route('/health')
 def health():
     """Health check endpoint"""
-    return jsonify({'status': 'healthy', 'message': 'Rex is running'}), 200
+    return jsonify({'status': 'healthy', 'message': 'Snello is running'}), 200
 
 @app.route('/manifest.json')
 def manifest():
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') != 'production'
     
-    print("🚀 Starting Rex AI Assistant...")
+    print("🚀 Starting Snello AI Assistant...")
     print(f"✅ DeepSeek API Key: {'✅ Configured' if os.getenv('OPENROUTER_API_KEY') else '❌ Missing'}")
     print(f"🌐 Server starting on http://127.0.0.1:{port}")
     

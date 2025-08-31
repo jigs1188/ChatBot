@@ -4,13 +4,4 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn main:app"
-    envVars:
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: snello-redis
-
-  - type: redis
-    name: snello-redis
-    ipAllowList: [] # Allow all IP addresses
 

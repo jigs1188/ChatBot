@@ -1,5 +1,66 @@
 {
-  "conversation_history": [],
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "Help me plan my day",
+      "timestamp": "2025-09-01T04:35:21.937962"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T04:35:21.937962"
+    },
+    {
+      "role": "user",
+      "content": "Add a todo: Buy groceries",
+      "timestamp": "2025-09-01T04:35:24.593505"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T04:35:24.593505"
+    },
+    {
+      "role": "user",
+      "content": "Hello!",
+      "timestamp": "2025-09-01T04:35:26.456387"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T04:35:26.456387"
+    },
+    {
+      "role": "user",
+      "content": "Hello!",
+      "timestamp": "2025-09-01T11:49:43.280442"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T11:49:43.280442"
+    },
+    {
+      "role": "user",
+      "content": "Hello!",
+      "timestamp": "2025-09-01T11:50:05.132240"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T11:50:05.132240"
+    },
+    {
+      "role": "user",
+      "content": "Show analytics",
+      "timestamp": "2025-09-01T11:54:21.178030"
+    },
+    {
+      "role": "assistant",
+      "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
+      "timestamp": "2025-09-01T11:54:21.178030"
+    }
+  ],
   "user_name": null,
   "analytics": {
     "total_tasks_created": 0,

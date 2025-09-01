@@ -1,6 +1,6 @@
 import json
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from datetime import datetime
 
 app = Flask(__name__)
@@ -77,15 +77,15 @@ def get_ai_response(user_input):
         }
         
         system_prompt = """You are Rex AI, a friendly personal assistant that helps with todo list management. 
-        
+
 You can help users:
-- Add tasks: "add buy milk" 
-- Show tasks: "show my list"
+- Add tasks: "add buy milk"
+- Show tasks: "show my list"  
 - Complete tasks: "complete task"
 - Clear all: "clear my list"
 
 Keep responses helpful, encouraging, and concise. Use emojis to make it friendly."""
-
+        
         data = {
             "model": "deepseek/deepseek-chat",
             "messages": [
@@ -97,9 +97,9 @@ Keep responses helpful, encouraging, and concise. Use emojis to make it friendly
         }
         
         response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=data,
+            "https://openrouter.ai/api/v1/chat/completions", 
+            headers=headers, 
+            json=data, 
             timeout=10
         )
         
@@ -136,7 +136,7 @@ def prompt():
             chat_history[:] = chat_history[-20:]
         
         return jsonify({'response': ai_response})
-        
+    
     except Exception as e:
         error_msg = "I'm having trouble right now. Try a simple command like 'add task' or 'show list'"
         return jsonify({'response': error_msg})
@@ -166,3 +166,6 @@ def internal_error(error):
 
 # Vercel entry point
 app = app
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

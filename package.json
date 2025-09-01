@@ -1,0 +1,30 @@
+{
+  "name": "rex-ai-assistant",
+  "version": "1.0.0",
+  "description": "Rex AI Assistant - Professional AI-Powered Productivity App with Mobile PWA",
+  "main": "main.py",
+  "scripts": {
+    "start": "python main.py",
+    "dev": "python main.py",
+    "build": "echo 'Production build complete'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "ai-assistant",
+    "chatbot",
+    "productivity",
+    "pwa",
+    "mobile-app",
+    "flask",
+    "openrouter",
+    "deepseek",
+    "todo-management",
+    "responsive-design"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jigs1188/ChatBot.git"
+  }
+}

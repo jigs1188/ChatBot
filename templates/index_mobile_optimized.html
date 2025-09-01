@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Rex AI Assistant - Your Intelligent Companion</title>
+    
+    <!-- Enhanced PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rex AI">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Rex AI Assistant">
+    
+    <!-- SEO & Description -->
+    <meta name="description" content="Rex AI - Your intelligent companion for conversations, tasks, and creative assistance. Beautiful, responsive, and powerful AI assistant.">
+    <meta name="keywords" content="AI, Assistant, Chat, Mobile, PWA, Artificial Intelligence">
+    
+    <!-- Enhanced Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236366f1'/><stop offset='100%' stop-color='%238b5cf6'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><text x='50' y='65' font-size='35' text-anchor='middle' fill='white'>🤖</text></svg>">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icon-144.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+</head>
+<body class="mobile-optimized">
+    <!-- Beautiful Loading Screen -->
+    <div class="loading-overlay" id="loading-screen">
+        <div class="loading-content">
+            <div class="logo-loading">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h2>Rex AI Assistant</h2>
+            <p>Your intelligent companion is waking up...</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator" id="scroll-indicator"></div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="app-container">
+        <!-- Enhanced Mobile Header -->
+        <div class="mobile-header">
+            <button class="menu-toggle interactive-element" id="menu-toggle" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+                <i class="fas fa-robot"></i>
+                <span>Rex AI</span>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn interactive-element" id="voice-toggle-btn" aria-label="Toggle voice input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="header-btn interactive-element" id="settings-btn" aria-label="Open settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Enhanced Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="close-sidebar" id="close-sidebar" aria-label="Close sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>Rex AI</span>
+                </div>
+                <p class="tagline">Your intelligent companion for every conversation</p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <button class="quick-btn interactive-element" onclick="quickAction('creative')">
+                    <i class="fas fa-palette"></i>
+                    <span>Creative Writing</span>
+                </button>
+                <button class="quick-btn interactive-element" onclick="quickAction('code')">
+                    <i class="fas fa-code"></i>
+                    <span>Code Assistant</span>
+                </button>
+                <button class="quick-btn interactive-element" onclick="quickAction('analyze')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Data Analysis</span>
+                </button>
+                <button class="quick-btn interactive-element" onclick="quickAction('explain')">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Explain Concepts</span>
+                </button>
+            </div>
+
+            <!-- Enhanced Stats -->
+            <div class="stats">
+                <h3><i class="fas fa-chart-bar"></i> Session Stats</h3>
+                <div class="stat-grid">
+                    <div class="stat-card glass-effect">
+                        <i class="fas fa-comments"></i>
+                        <div class="stat-info">
+                            <div class="stat-number" id="message-count">0</div>
+                            <div class="stat-label">Messages</div>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-effect">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-info">
+                            <div class="stat-number" id="session-time">0m</div>
+                            <div class="stat-label">Session</div>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-effect">
+                        <i class="fas fa-brain"></i>
+                        <div class="stat-info">
+                            <div class="stat-number">AI</div>
+                            <div class="stat-label">Ready</div>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-effect">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-info">
+                            <div class="stat-number">4.9</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Features -->
+            <div class="features">
+                <h3><i class="fas fa-magic"></i> AI Capabilities</h3>
+                <div class="feature-item">
+                    <i class="fas fa-language"></i>
+                    <span>Multilingual Support</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-image"></i>
+                    <span>Visual Understanding</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file-text"></i>
+                    <span>Document Analysis</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Learning & Teaching</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy Protected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Enhanced Main Content -->
+        <div class="main-content">
+            <div class="chat-container">
+                <!-- Enhanced Chat History -->
+                <div class="chat-history" id="chat-history">
+                    <!-- Welcome message with enhanced styling -->
+                    <div class="message bot-message glass-effect" style="animation-delay: 0.3s;">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>🎉 <strong>Welcome to Rex AI Assistant!</strong></p>
+                            <p>I'm your intelligent companion, ready to help with conversations, creative tasks, coding, analysis, and much more. How can I assist you today?</p>
+                            <div class="message-features">
+                                <span class="feature-tag"><i class="fas fa-brain"></i> Smart AI</span>
+                                <span class="feature-tag"><i class="fas fa-mobile-alt"></i> Mobile Optimized</span>
+                                <span class="feature-tag"><i class="fas fa-lock"></i> Secure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Chat Input -->
+                <div class="chat-input-container">
+                    <!-- Smart Suggestions -->
+                    <div class="input-suggestions" id="suggestions">
+                        <button class="suggestion-chip interactive-element" onclick="useSuggestion('Tell me a creative story')">
+                            <i class="fas fa-book"></i> Creative Story
+                        </button>
+                        <button class="suggestion-chip interactive-element" onclick="useSuggestion('Help me write code')">
+                            <i class="fas fa-code"></i> Code Help
+                        </button>
+                        <button class="suggestion-chip interactive-element" onclick="useSuggestion('Explain quantum physics')">
+                            <i class="fas fa-atom"></i> Explain Science
+                        </button>
+                        <button class="suggestion-chip interactive-element" onclick="useSuggestion('Plan my day')">
+                            <i class="fas fa-calendar"></i> Plan Day
+                        </button>
+                    </div>
+
+                    <div class="chat-input">
+                        <div class="input-wrapper glass-effect">
+                            <button class="input-btn" id="attach-btn" aria-label="Attach file">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="text" 
+                                   id="prompt-input" 
+                                   placeholder="Ask Rex anything... I'm here to help! ✨"
+                                   autocomplete="off"
+                                   maxlength="2000">
+                            <button class="input-btn" id="emoji-btn" aria-label="Add emoji">
+                                <i class="fas fa-smile"></i>
+                            </button>
+                            <button class="send-button interactive-element" 
+                                    id="send-button" 
+                                    aria-label="Send message"
+                                    disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Swipe Hint -->
+                    <div class="swipe-hint">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span>Swipe left on messages for options</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action">
+        <button class="floating-btn" id="scroll-to-bottom" aria-label="Scroll to bottom">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>
+
+    <!-- Enhanced Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings & Preferences</h2>
+                <button class="modal-close interactive-element" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label><i class="fas fa-palette"></i> Theme</label>
+                    <div class="theme-options">
+                        <button class="theme-btn interactive-element" data-theme="dark">
+                            <i class="fas fa-moon"></i> Dark
+                        </button>
+                        <button class="theme-btn interactive-element" data-theme="light">
+                            <i class="fas fa-sun"></i> Light
+                        </button>
+                        <button class="theme-btn active interactive-element" data-theme="auto">
+                            <i class="fas fa-magic"></i> Auto
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label><i class="fas fa-volume-up"></i> Voice Input</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="voice-enabled">
+                        <label for="voice-enabled"></label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label><i class="fas fa-bell"></i> Notifications</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="notifications-enabled" checked>
+                        <label for="notifications-enabled"></label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label><i class="fas fa-magic"></i> Animation Effects</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="animations-enabled" checked>
+                        <label for="animations-enabled"></label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label><i class="fas fa-font"></i> Font Size</label>
+                    <select class="setting-select">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Enhanced Scripts -->
+    <script src="/static/script.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                        showToast('App is ready for offline use!', 'success');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+
+    <!-- Enhanced Mobile Interactions -->
+    <script>
+        // Touch and gesture support
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (!touchStartX || !touchStartY) return;
+            
+            let touchEndX = e.touches[0].clientX;
+            let touchEndY = e.touches[0].clientY;
+            
+            let diffX = touchStartX - touchEndX;
+            let diffY = touchStartY - touchEndY;
+            
+            // Horizontal swipe detection
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 50) {
+                    // Swipe left - could open menu options
+                    console.log('Swipe left detected');
+                } else if (diffX < -50) {
+                    // Swipe right - could close menu
+                    if (document.getElementById('sidebar').classList.contains('open')) {
+                        closeSidebar();
+                    }
+                }
+            }
+            
+            touchStartX = null;
+            touchStartY = null;
+        });
+        
+        // Haptic feedback simulation
+        function hapticFeedback() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(10); // Very short vibration
+            }
+        }
+        
+        // Add haptic feedback to interactive elements
+        document.querySelectorAll('.interactive-element').forEach(element => {
+            element.addEventListener('touchstart', hapticFeedback);
+        });
+        
+        // Scroll progress indicator
+        function updateScrollIndicator() {
+            const chatHistory = document.getElementById('chat-history');
+            const indicator = document.getElementById('scroll-indicator');
+            const scrollPercentage = (chatHistory.scrollTop / (chatHistory.scrollHeight - chatHistory.clientHeight)) * 100;
+            
+            if (scrollPercentage > 10) {
+                indicator.classList.add('visible');
+                indicator.style.transform = `translateX(-${100 - scrollPercentage}%)`;
+            } else {
+                indicator.classList.remove('visible');
+            }
+        }
+        
+        // Add scroll listener
+        document.getElementById('chat-history').addEventListener('scroll', updateScrollIndicator);
+        
+        // Quick actions
+        function quickAction(type) {
+            const actions = {
+                'creative': 'Help me write a creative story about a magical world',
+                'code': 'I need help with coding. Can you assist me?',
+                'analyze': 'Can you help me analyze some data?',
+                'explain': 'Can you explain a complex concept in simple terms?'
+            };
+            
+            const input = document.getElementById('prompt-input');
+            input.value = actions[type];
+            input.focus();
+            
+            // Auto-send after a brief delay
+            setTimeout(() => {
+                document.getElementById('send-button').click();
+            }, 500);
+        }
+        
+        // Use suggestion
+        function useSuggestion(text) {
+            const input = document.getElementById('prompt-input');
+            input.value = text;
+            input.focus();
+        }
+    </script>
+</body>
+</html>

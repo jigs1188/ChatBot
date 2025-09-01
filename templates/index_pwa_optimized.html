@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex AI Assistant - PWA Optimized</title>
+    <meta name="description" content="Your intelligent AI assistant for productivity and task management">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rex AI">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+    
+    <!-- Icons for better PWA score -->
+    <link rel="icon" type="image/png" sizes="72x72" href="/static/icon-72.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/icon-96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/static/icon-128.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/static/icon-144.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/static/icon-152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="/static/icon-384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icon-512.png">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>🤖 Rex AI Assistant</h1>
+            <p>Your Intelligent AI Companion</p>
+        </header>
+        
+        <main>
+            <!-- Chat Interface -->
+            <div id="chat-container">
+                <div id="messages"></div>
+                <div id="input-container">
+                    <input type="text" id="message-input" placeholder="Ask Rex anything...">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+            
+            <!-- Todo Section -->
+            <div id="todo-section">
+                <h2>📋 Todo List</h2>
+                <div id="todo-container">
+                    <input type="text" id="todo-input" placeholder="Add new task...">
+                    <button id="add-todo">Add</button>
+                    <ul id="todo-list"></ul>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Install Button for PWA -->
+        <div id="install-prompt" style="display: none;">
+            <button id="install-button">📱 Install App</button>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="/static/script.js"></script>
+    
+    <!-- PWA Install Prompt -->
+    <script>
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-prompt').style.display = 'block';
+        });
+        
+        document.getElementById('install-button').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('install-prompt').style.display = 'none';
+            }
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            document.getElementById('install-prompt').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

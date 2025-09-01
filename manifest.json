@@ -1,22 +1,41 @@
 {
-  "id": "rex-ai-assistant-app",
-  "name": "Rex AI Assistant",
-  "short_name": "Rex",
-  "description": "Your intelligent AI assistant for productivity and task management",
+  "id": "rex-ai-assistant-mobile-app",
+  "name": "Rex AI Assistant - Mobile Optimized",
+  "short_name": "Rex AI",
+  "description": "Your intelligent AI companion - Beautiful, responsive, and powerful mobile-first AI assistant for conversations, creativity, and productivity.",
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
   "background_color": "#0f172a",
   "theme_color": "#6366f1",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en-US",
   "dir": "ltr",
-  "categories": ["productivity", "utilities", "business"],
+  "categories": ["productivity", "utilities", "business", "education", "entertainment"],
   "iarc_rating_id": "e84b072d-71de-3dae-a8ea-1234567890ab",
   "launch_handler": {
     "client_mode": "focus-existing"
   },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "screenshots": [
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Rex AI Assistant - Desktop View"
+    },
+    {
+      "src": "/static/icon-384.png", 
+      "sizes": "384x384",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Rex AI Assistant - Mobile View"
+    }
+  ],
   "icons": [
     {
       "src": "/static/icon-72.png",
@@ -139,8 +158,5 @@
       "origin": "https://rex-ai-assistant.vercel.app"
     }
   ],
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+  "prefer_related_applications": false
 }

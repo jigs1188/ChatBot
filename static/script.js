@@ -13,27 +13,35 @@ class AiAssistant {
             totalProjects: parseInt(localStorage.getItem('totalProjects')) || 1
         };
         
+        // Mobile-specific properties
+        this.isMobile = window.innerWidth <= 768;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.sessionStartTime = Date.now();
+        
         // Quick initialization without delay
         this.quickInit();
     }
 
     async quickInit() {
         try {
-            console.log('🔄 Quick initializing...');
+            console.log('🔄 Quick initializing mobile-optimized Rex AI...');
             
-            // Hide loading screen immediately and show app
+            // Hide loading screen with beautiful animation
             setTimeout(() => {
                 this.hideLoadingScreen();
-            }, 500);
+            }, 800);
             
             this.setupEventListeners();
+            this.setupMobileInteractions();
             this.loadChatHistory();
             this.updateStats();
             this.applyTheme();
             this.checkPWASupport();
-            console.log('🚀 AI Assistant initialized successfully');
+            this.startSessionTimer();
+            console.log('🚀 Mobile AI Assistant initialized successfully');
             
-            // Ensure app is visible
+            // Ensure app is visible with enhanced animation
             const appContainer = document.querySelector('.app-container');
             if (appContainer) {
                 appContainer.classList.add('loaded');
@@ -41,10 +49,143 @@ class AiAssistant {
                 appContainer.style.pointerEvents = 'auto';
             }
             
+            // Show welcome toast for mobile users
+            if (this.isMobile) {
+                setTimeout(() => {
+                    this.showToast('Swipe right to open menu, left for message options! 📱', 'success');
+                }, 2000);
+            }
+            
         } catch (error) {
             console.error('❌ Initialization error:', error);
             this.hideLoadingScreen(); // Ensure loading screen is hidden
         }
+    }
+
+    setupMobileInteractions() {
+        // Enhanced touch interactions
+        document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.touches[0].clientX;
+            this.touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            if (!this.touchStartX || !this.touchStartY) return;
+            
+            let touchEndX = e.changedTouches[0].clientX;
+            let touchEndY = e.changedTouches[0].clientY;
+            
+            let diffX = this.touchStartX - touchEndX;
+            let diffY = this.touchStartY - touchEndY;
+            
+            // Horizontal swipe detection
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left - show message options
+                    this.handleSwipeLeft(e);
+                } else {
+                    // Swipe right - open sidebar
+                    this.handleSwipeRight(e);
+                }
+            }
+            
+            this.touchStartX = null;
+            this.touchStartY = null;
+        });
+        
+        // Haptic feedback for supported devices
+        if ('vibrate' in navigator) {
+            document.querySelectorAll('.interactive-element').forEach(element => {
+                element.addEventListener('touchstart', () => {
+                    navigator.vibrate(10);
+                });
+            });
+        }
+        
+        // Enhanced scroll behavior
+        const chatHistory = document.getElementById('chat-history');
+        if (chatHistory) {
+            chatHistory.addEventListener('scroll', this.updateScrollIndicator.bind(this));
+        }
+        
+        // Auto-resize input on mobile
+        const input = document.getElementById('prompt-input');
+        if (input && this.isMobile) {
+            input.addEventListener('input', this.autoResizeInput.bind(this));
+        }
+    }
+
+    handleSwipeLeft(e) {
+        // Add visual feedback for swipe left
+        const target = e.target.closest('.message');
+        if (target && target.classList.contains('bot-message')) {
+            this.showMessageOptions(target);
+        }
+    }
+
+    handleSwipeRight(e) {
+        // Open sidebar on swipe right
+        if (!document.getElementById('sidebar').classList.contains('open')) {
+            this.openSidebar();
+        }
+    }
+
+    showMessageOptions(messageElement) {
+        // Create floating action menu for message
+        const existingMenu = document.querySelector('.message-options');
+        if (existingMenu) existingMenu.remove();
+        
+        const menu = document.createElement('div');
+        menu.className = 'message-options glass-effect';
+        menu.innerHTML = `
+            <button class="option-btn" onclick="copyMessage(this)">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+            <button class="option-btn" onclick="shareMessage(this)">
+                <i class="fas fa-share"></i> Share
+            </button>
+            <button class="option-btn" onclick="saveMessage(this)">
+                <i class="fas fa-bookmark"></i> Save
+            </button>
+        `;
+        
+        messageElement.appendChild(menu);
+        setTimeout(() => menu.remove(), 3000);
+    }
+
+    updateScrollIndicator() {
+        const chatHistory = document.getElementById('chat-history');
+        const indicator = document.getElementById('scroll-indicator');
+        if (!chatHistory || !indicator) return;
+        
+        const scrollPercentage = (chatHistory.scrollTop / (chatHistory.scrollHeight - chatHistory.clientHeight)) * 100;
+        
+        if (scrollPercentage > 10) {
+            indicator.classList.add('visible');
+            indicator.style.transform = `translateX(-${100 - scrollPercentage}%)`;
+        } else {
+            indicator.classList.remove('visible');
+        }
+    }
+
+    autoResizeInput() {
+        const input = document.getElementById('prompt-input');
+        if (!input) return;
+        
+        // Auto-expand input height on mobile
+        input.style.height = 'auto';
+        const newHeight = Math.min(input.scrollHeight, 120);
+        input.style.height = newHeight + 'px';
+    }
+
+    startSessionTimer() {
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 60000);
+            const timeElement = document.getElementById('session-time');
+            if (timeElement) {
+                timeElement.textContent = elapsed + 'm';
+            }
+        }, 60000);
     }
 
     async init() {
@@ -304,12 +445,12 @@ class AiAssistant {
             this.closeSidebar();
 
             // Send to backend
-            const response = await fetch('/prompt', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ prompt: message })
+                body: JSON.stringify({ message: message })
             });
 
             if (!response.ok) {
@@ -497,16 +638,29 @@ class AiAssistant {
     }
 
     updateStatsDisplay() {
+        // Update message count
+        const messageCountEl = document.getElementById('message-count');
+        if (messageCountEl) {
+            messageCountEl.textContent = this.stats.messageCount || 0;
+        }
+        
+        // Update session time
+        const sessionTimeEl = document.getElementById('session-time');
+        if (sessionTimeEl) {
+            sessionTimeEl.textContent = this.stats.sessionTime || '0m';
+        }
+        
+        // Update other stats based on the actual API response
         const statElements = {
-            'totalChats': document.querySelector('[data-stat="chats"] .stat-number'),
+            'messageCount': document.querySelector('#message-count'),
+            'todoCount': document.querySelector('[data-stat="todos"] .stat-number'),
             'completedTasks': document.querySelector('[data-stat="tasks"] .stat-number'),
-            'activeTodos': document.querySelector('[data-stat="todos"] .stat-number'),
-            'totalProjects': document.querySelector('[data-stat="projects"] .stat-number')
+            'totalTasks': document.querySelector('[data-stat="total-tasks"] .stat-number')
         };
 
         Object.entries(statElements).forEach(([key, element]) => {
-            if (element) {
-                element.textContent = this.stats[key] || 0;
+            if (element && this.stats[key] !== undefined) {
+                element.textContent = this.stats[key];
             }
         });
     }

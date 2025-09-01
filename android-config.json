@@ -1,0 +1,120 @@
+{
+  "appDetails": {
+    "name": "Rex AI Assistant",
+    "packageName": "com.rexai.assistant.app",
+    "applicationId": "com.rexai.assistant.app",
+    "versionName": "1.0.1",
+    "versionCode": 2,
+    "description": "Your intelligent AI assistant for productivity and task management. Chat with DeepSeek AI, manage todos, and boost productivity.",
+    "category": "PRODUCTIVITY",
+    "keywords": ["AI", "Assistant", "Productivity", "Chat", "Tasks", "Todo", "DeepSeek"]
+  },
+
+  "buildConfiguration": {
+    "platform": "android",
+    "minSdkVersion": 21,
+    "targetSdkVersion": 33,
+    "compileSdkVersion": 33,
+    "buildToolsVersion": "33.0.0",
+    "gradleVersion": "7.6",
+    "androidGradlePluginVersion": "7.4.0"
+  },
+
+  "webApp": {
+    "url": "https://rex-ai-assistant.vercel.app/",
+    "manifestUrl": "https://rex-ai-assistant.vercel.app/static/manifest.json",
+    "scope": "/",
+    "startUrl": "/",
+    "display": "standalone",
+    "orientation": "default",
+    "themeColor": "#6366f1",
+    "backgroundColor": "#0f172a"
+  },
+
+  "androidSpecific": {
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.VIBRATE",
+      "android.permission.RECORD_AUDIO",
+      "android.permission.WAKE_LOCK",
+      "android.permission.ACCESS_WIFI_STATE"
+    ],
+    "features": [
+      {
+        "name": "android.hardware.touchscreen",
+        "required": false
+      },
+      {
+        "name": "android.hardware.microphone",
+        "required": false
+      },
+      {
+        "name": "android.software.webview",
+        "required": true
+      }
+    ],
+    "signing": {
+      "keystore": "./debug.keystore",
+      "alias": "rex-ai-key",
+      "storePassword": "android",
+      "keyPassword": "android"
+    },
+    "splashScreen": {
+      "backgroundColor": "#0f172a",
+      "image": "https://rex-ai-assistant.vercel.app/static/icon-512.png",
+      "fadeOutDuration": 300
+    },
+    "webView": {
+      "enableDomStorage": true,
+      "enableJavaScript": true,
+      "allowFileAccess": false,
+      "allowUniversalAccessFromFileURLs": false,
+      "mixedContentMode": "MIXED_CONTENT_COMPATIBILITY_MODE"
+    }
+  },
+
+  "icons": {
+    "android": {
+      "mdpi": "https://rex-ai-assistant.vercel.app/static/icon-96.png",
+      "hdpi": "https://rex-ai-assistant.vercel.app/static/icon-144.png", 
+      "xhdpi": "https://rex-ai-assistant.vercel.app/static/icon-192.png",
+      "xxhdpi": "https://rex-ai-assistant.vercel.app/static/icon-384.png",
+      "xxxhdpi": "https://rex-ai-assistant.vercel.app/static/icon-512.png"
+    },
+    "adaptive": {
+      "foreground": "https://rex-ai-assistant.vercel.app/static/icon-512.png",
+      "background": "#0f172a"
+    },
+    "maskable": "https://rex-ai-assistant.vercel.app/static/icon-512.png"
+  },
+
+  "googlePlay": {
+    "track": "internal",
+    "releaseStatus": "draft",
+    "shortDescription": "AI-powered productivity assistant with chat and task management",
+    "fullDescription": "Rex AI Assistant is your intelligent companion for productivity and task management. Powered by advanced DeepSeek AI technology, Rex helps you:\n\n🤖 Intelligent Conversations\n• Natural language chat interface\n• Context-aware responses\n• Real-time AI assistance\n\n📋 Smart Task Management\n• AI-assisted todo creation\n• Priority detection\n• Progress tracking\n\n📊 Productivity Analytics\n• Usage insights\n• Performance metrics\n• Goal tracking\n\n✨ Modern Experience\n• Beautiful mobile-first design\n• Offline functionality\n• Cross-platform compatibility\n\nDownload Rex AI Assistant today and transform your productivity!",
+    "screenshots": [
+      {
+        "type": "phoneScreenshots",
+        "url": "https://rex-ai-assistant.vercel.app/static/icon-512.png"
+      },
+      {
+        "type": "tabletScreenshots", 
+        "url": "https://rex-ai-assistant.vercel.app/static/icon-512.png"
+      }
+    ],
+    "privacyPolicyUrl": "https://rex-ai-assistant.vercel.app/privacy",
+    "contactEmail": "support@rexai.tech",
+    "contactWebsite": "https://rex-ai-assistant.vercel.app/",
+    "contentRating": "Everyone"
+  },
+
+  "buildOptions": {
+    "outputType": ["apk", "aab"],
+    "signing": "debug",
+    "optimization": true,
+    "minify": true,
+    "proguard": false
+  }
+}

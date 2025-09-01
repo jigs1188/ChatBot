@@ -1,0 +1,78 @@
+{
+  "name": "Rex AI Assistant",
+  "packageId": "com.rexai.assistant",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "description": "Your intelligent AI assistant for productivity and task management",
+  "publisher": "Rex AI Technologies",
+  "publisherId": "rex-ai-tech",
+  
+  "platform": {
+    "name": "android",
+    "targetSdkVersion": 34,
+    "minSdkVersion": 24,
+    "compileSdkVersion": 34
+  },
+  
+  "manifest": {
+    "packageUrl": "https://rex-ai-assistant.vercel.app/",
+    "name": "Rex AI Assistant",
+    "publisher": "Your Publisher Name",
+    "version": "1.0.0",
+    "description": "Your intelligent AI assistant for productivity and task management. Chat with DeepSeek AI, manage todos, and boost productivity.",
+    "category": "productivity",
+    "privacyPolicyUrl": "https://rex-ai-assistant.vercel.app/privacy",
+    "packageManifest": "./pwabuilder-manifest.json"
+  },
+
+  "features": {
+    "backgroundTasks": true,
+    "pushNotifications": true,
+    "fileSystem": true,
+    "clipboard": true,
+    "fullscreen": false,
+    "webView": true
+  },
+
+  "icons": {
+    "Square44x44Logo": "./static/icon-144.png",
+    "Square150x150Logo": "./static/icon-192.png",
+    "StoreLogo": "./static/icon-512.png",
+    "Wide310x150Logo": "./static/icon-384.png"
+  },
+
+  "resources": {
+    "splash": "./static/icon-512.png",
+    "icons": [
+      {
+        "size": "44x44",
+        "src": "./static/icon-144.png"
+      },
+      {
+        "size": "150x150",
+        "src": "./static/icon-192.png"
+      },
+      {
+        "size": "310x150",
+        "src": "./static/icon-384.png"
+      },
+      {
+        "size": "310x310",
+        "src": "./static/icon-512.png"
+      }
+    ]
+  },
+
+  "capabilities": [
+    "internetClient",
+    "internetClientServer",
+    "privateNetworkClientServer"
+  ],
+
+  "validation": {
+    "manifest": true,
+    "serviceWorker": true,
+    "https": true,
+    "icons": true
+  }
+}

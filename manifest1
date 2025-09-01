@@ -1,0 +1,140 @@
+{
+"name": "Rex AI Assistant",
+"short_name": "Rex AI",
+"start_url": "/",
+"display": "standalone",
+"description": "Your intelligent AI assistant for productivity and task management. Chat with DeepSeek AI, manage todos, and boost productivity.",
+"lang": "en-US",
+"dir": "ltr",
+"theme_color": "#6366f1",
+"background_color": "#0f172a",
+"orientation": "portrait-primary",
+"scope": "/",
+"id": "rex-ai-assistant-pwa",
+"categories": ["productivity", "utilities", "business"],
+"prefer_related_applications": false,
+"handle_links": "preferred",
+"icons": [
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any"
+    },
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-144.png",
+        "sizes": "144x144",
+        "type": "image/png",
+        "purpose": "any"
+    },
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-128.png",
+        "sizes": "128x128",
+        "type": "image/png",
+        "purpose": "any"
+    },
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-96.png",
+        "sizes": "96x96",
+        "type": "image/png",
+        "purpose": "any"
+    },
+    {
+        "src": "https://rex-ai-assistant.vercel.app/static/icon-72.png",
+        "sizes": "72x72",
+        "type": "image/png",
+        "purpose": "any"
+    }
+],
+"screenshots": [
+    {
+        "src": "/static/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "form_factor": "narrow",
+        "label": "Rex AI Assistant Chat Interface"
+    },
+    {
+        "src": "/static/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "form_factor": "wide",
+        "label": "Rex AI Assistant Desktop View"
+    }
+],
+"related_applications": [
+    {
+        "platform": "windows",
+        "url": "https://apps.microsoft.com/store/search?publisher=Your%20Name"
+    },
+    {
+        "platform": "play",
+        "url": "https://play.google.com/store/apps/details?id=com.rexai.assistant"
+    }
+],
+"shortcuts": [
+    {
+        "name": "New Chat",
+        "url": "/",
+        "description": "Start a new conversation with Rex AI",
+        "icons": [
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }
+        ]
+    },
+    {
+        "name": "Todo List",
+        "url": "/?action=todos",
+        "description": "Manage your tasks and todos",
+        "icons": [
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }
+        ]
+    },
+    {
+        "name": "Analytics",
+        "url": "/?action=stats",
+        "description": "View productivity analytics",
+        "icons": [
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }
+        ]
+    }
+],
+"file_handlers": [
+    {
+        "action": "/",
+        "accept": {
+            "text/plain": [".txt"],
+            "application/json": [".json"]
+        }
+    }
+],
+"protocol_handlers": [
+    {
+        "protocol": "web+rexai",
+        "url": "/?action=%s"
+    }
+],
+"launch_handler": {
+    "client_mode": "focus-existing"
+},
+"edge_side_panel": {
+    "preferred_width": 400
+}
+}

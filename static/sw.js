@@ -1,11 +1,18 @@
-// Service Worker for Snello AI Assistant PWA
-const CACHE_NAME = 'snello-ai-v1.0.0';
+// Service Worker for Rex AI Assistant PWA - Performance Optimized
+const CACHE_NAME = 'rex-ai-v2.0.0';
 const urlsToCache = [
   '/',
   '/static/style.css',
   '/static/script.js',
   '/static/manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+  '/static/icon-192.png',
+  '/static/icon-512.png'
+];
+
+// External resources - cache separately
+const EXTERNAL_CACHE = 'rex-ai-external-v1.0.0';
+const externalResources = [
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 

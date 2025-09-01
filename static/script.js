@@ -63,11 +63,51 @@ class AiAssistant {
     }
 
     setupMobileInteractions() {
-        // Enhanced touch interactions
+        console.log('📱 Setting up mobile interactions...');
+        
+        // Enhanced touch interactions for sidebar
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isSwiping = false;
+        
+        // Add swipe zone interaction
+        const swipeZone = document.querySelector('.swipe-zone');
+        if (swipeZone) {
+            console.log('✅ Swipe zone found, adding listeners');
+            
+            swipeZone.addEventListener('touchstart', (e) => {
+                console.log('👆 Touch start on swipe zone');
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isSwiping = true;
+            }, { passive: true });
+            
+            swipeZone.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
+                
+                const currentX = e.touches[0].clientX;
+                const diffX = currentX - touchStartX;
+                
+                // If swiping right from left edge
+                if (diffX > 30) {
+                    console.log('👉 Swipe right detected from edge');
+                    this.toggleSidebar();
+                    isSwiping = false;
+                }
+            }, { passive: true });
+            
+            swipeZone.addEventListener('touchend', () => {
+                isSwiping = false;
+            }, { passive: true });
+        } else {
+            console.warn('⚠️ Swipe zone not found');
+        }
+        
+        // Global touch events for general swipe detection
         document.addEventListener('touchstart', (e) => {
             this.touchStartX = e.touches[0].clientX;
             this.touchStartY = e.touches[0].clientY;
-        });
+        }, { passive: true });
         
         document.addEventListener('touchend', (e) => {
             if (!this.touchStartX || !this.touchStartY) return;
@@ -78,34 +118,30 @@ class AiAssistant {
             let diffX = this.touchStartX - touchEndX;
             let diffY = this.touchStartY - touchEndY;
             
-            // Horizontal swipe detection
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0) {
-                    // Swipe left - show message options
-                    this.handleSwipeLeft(e);
-                } else {
-                    // Swipe right - open sidebar
-                    this.handleSwipeRight(e);
+            // Only detect swipes from very left edge of screen
+            if (this.touchStartX < 50 && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+                if (diffX < 0) { // Swipe right from left edge
+                    console.log('👉 Edge swipe right - opening sidebar');
+                    this.toggleSidebar();
+                    this.addHapticFeedback('medium');
                 }
             }
             
             this.touchStartX = null;
             this.touchStartY = null;
-        });
+        }, { passive: true });
         
-        // Haptic feedback for supported devices
-        if ('vibrate' in navigator) {
-            document.querySelectorAll('.interactive-element').forEach(element => {
-                element.addEventListener('touchstart', () => {
-                    navigator.vibrate(10);
-                });
-            });
-        }
+        // Add haptic feedback to all interactive elements
+        document.querySelectorAll('.animate-on-tap, .quick-btn, .header-btn, .send-button').forEach(element => {
+            element.addEventListener('touchstart', () => {
+                this.addHapticFeedback('light');
+            }, { passive: true });
+        });
         
         // Enhanced scroll behavior
         const chatHistory = document.getElementById('chat-history');
         if (chatHistory) {
-            chatHistory.addEventListener('scroll', this.updateScrollIndicator.bind(this));
+            chatHistory.addEventListener('scroll', this.updateScrollIndicator.bind(this), { passive: true });
         }
         
         // Auto-resize input on mobile
@@ -113,58 +149,126 @@ class AiAssistant {
         if (input && this.isMobile) {
             input.addEventListener('input', this.autoResizeInput.bind(this));
         }
+
+        // Setup theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+                this.addHapticFeedback('medium');
+            });
+        }
+    }
+
+    addHapticFeedback(intensity = 'light') {
+        if ('vibrate' in navigator) {
+            const vibrationPattern = {
+                'light': 10,
+                'medium': [10, 10, 10],
+                'heavy': [20, 10, 20]
+            };
+            navigator.vibrate(vibrationPattern[intensity] || 10);
+        }
+        
+        // Visual feedback for devices without vibration
+        const element = document.activeElement;
+        if (element && element.classList.contains('animate-on-tap')) {
+            element.classList.add(`haptic-${intensity}`);
+            setTimeout(() => {
+                element.classList.remove(`haptic-${intensity}`);
+            }, 200);
+        }
+    }
+
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.currentTheme = newTheme;
+        localStorage.setItem('theme', newTheme);
+        this.applyTheme();
+        this.showToast(`Switched to ${newTheme} theme! ✨`, 'success');
+    }
+
+    showMobileTypingIndicator() {
+        const indicator = document.getElementById('mobile-typing-indicator');
+        if (indicator) {
+            indicator.style.display = 'flex';
+        }
+    }
+
+    hideMobileTypingIndicator() {
+        const indicator = document.getElementById('mobile-typing-indicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
     }
 
     handleSwipeLeft(e) {
-        // Add visual feedback for swipe left
-        const target = e.target.closest('.message');
-        if (target && target.classList.contains('bot-message')) {
-            this.showMessageOptions(target);
+        // Show quick actions or message options
+        if (this.isMobile) {
+            const messageElement = e.target.closest('.message');
+            if (messageElement) {
+                this.showMessageOptions(messageElement);
+            }
         }
     }
 
     handleSwipeRight(e) {
-        // Open sidebar on swipe right
-        if (!document.getElementById('sidebar').classList.contains('open')) {
-            this.openSidebar();
+        // Open sidebar
+        console.log('👉 Swipe right detected');
+        if (this.isMobile) {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar && !sidebar.classList.contains('open')) {
+                console.log('📱 Opening sidebar via swipe');
+                this.toggleSidebar();
+                this.addHapticFeedback('medium');
+            }
         }
     }
 
     showMessageOptions(messageElement) {
-        // Create floating action menu for message
-        const existingMenu = document.querySelector('.message-options');
+        // Create floating action menu for messages
+        const existingMenu = document.querySelector('.message-options-menu');
         if (existingMenu) existingMenu.remove();
         
         const menu = document.createElement('div');
-        menu.className = 'message-options glass-effect';
+        menu.className = 'message-options-menu';
         menu.innerHTML = `
-            <button class="option-btn" onclick="copyMessage(this)">
+            <button class="option-btn" onclick="window.aiAssistant.copyMessage(this)">
                 <i class="fas fa-copy"></i> Copy
             </button>
-            <button class="option-btn" onclick="shareMessage(this)">
+            <button class="option-btn" onclick="window.aiAssistant.shareMessage(this)">
                 <i class="fas fa-share"></i> Share
-            </button>
-            <button class="option-btn" onclick="saveMessage(this)">
-                <i class="fas fa-bookmark"></i> Save
             </button>
         `;
         
+        messageElement.style.position = 'relative';
         messageElement.appendChild(menu);
-        setTimeout(() => menu.remove(), 3000);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            if (menu.parentNode) menu.remove();
+        }, 3000);
     }
 
     updateScrollIndicator() {
         const chatHistory = document.getElementById('chat-history');
-        const indicator = document.getElementById('scroll-indicator');
-        if (!chatHistory || !indicator) return;
+        if (!chatHistory) return;
         
         const scrollPercentage = (chatHistory.scrollTop / (chatHistory.scrollHeight - chatHistory.clientHeight)) * 100;
+        const scrollBtn = document.getElementById('scroll-to-bottom-btn');
         
-        if (scrollPercentage > 10) {
-            indicator.classList.add('visible');
-            indicator.style.transform = `translateX(-${100 - scrollPercentage}%)`;
-        } else {
-            indicator.classList.remove('visible');
+        if (scrollBtn) {
+            if (scrollPercentage < 90) {
+                scrollBtn.style.display = 'flex';
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+                setTimeout(() => {
+                    if (!scrollBtn.classList.contains('visible')) {
+                        scrollBtn.style.display = 'none';
+                    }
+                }, 300);
+            }
         }
     }
 
@@ -178,14 +282,69 @@ class AiAssistant {
         input.style.height = newHeight + 'px';
     }
 
-    startSessionTimer() {
-        setInterval(() => {
-            const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 60000);
-            const timeElement = document.getElementById('session-time');
-            if (timeElement) {
-                timeElement.textContent = elapsed + 'm';
-            }
-        }, 60000);
+    copyMessage(button) {
+        const messageElement = button.closest('.message');
+        const messageText = messageElement.querySelector('.message-content').textContent;
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(messageText);
+            this.showToast('Message copied! 📋', 'success');
+        }
+        this.addHapticFeedback('light');
+    }
+
+    shareMessage(button) {
+        const messageElement = button.closest('.message');
+        const messageText = messageElement.querySelector('.message-content').textContent;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Rex AI Response',
+                text: messageText
+            });
+        } else {
+            this.copyMessage(button);
+        }
+        this.addHapticFeedback('light');
+    }
+
+    openSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar) {
+            sidebar.classList.add('open');
+        }
+        if (overlay) {
+            overlay.classList.add('active');
+            // Close sidebar when overlay is clicked
+            overlay.addEventListener('click', () => {
+                this.closeSidebar();
+            }, { once: true });
+        }
+        
+        // Auto-close sidebar after 10 seconds on mobile
+        if (this.isMobile) {
+            setTimeout(() => {
+                if (sidebar && sidebar.classList.contains('open')) {
+                    this.closeSidebar();
+                }
+            }, 10000);
+        }
+    }
+
+    closeSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar) {
+            sidebar.classList.remove('open');
+        }
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+        
+        this.addHapticFeedback('light');
     }
 
     async init() {
@@ -237,23 +396,78 @@ class AiAssistant {
     }
 
     setupEventListeners() {
+        console.log('🔧 Setting up event listeners...');
+        
         // Mobile menu toggle
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         const closeSidebar = document.querySelector('.close-sidebar');
+    const handle = document.getElementById('sidebar-handle');
+
+        console.log('Elements found:', {
+            menuToggle: !!menuToggle,
+            sidebar: !!sidebar,
+            overlay: !!overlay,
+            closeSidebar: !!closeSidebar
+        });
 
         if (menuToggle) {
-            menuToggle.addEventListener('click', () => this.toggleSidebar());
+            menuToggle.addEventListener('click', (e) => {
+                console.log('📱 Menu toggle clicked');
+                e.preventDefault();
+                this.toggleSidebar();
+            });
         }
         
         if (overlay) {
-            overlay.addEventListener('click', () => this.closeSidebar());
+            overlay.addEventListener('click', (e) => {
+                console.log('📱 Overlay clicked');
+                e.preventDefault();
+                this.closeSidebar();
+            });
         }
         
         if (closeSidebar) {
-            closeSidebar.addEventListener('click', () => this.closeSidebar());
+            closeSidebar.addEventListener('click', (e) => {
+                console.log('📱 Close sidebar clicked');
+                e.preventDefault();
+                this.closeSidebar();
+            });
         }
+
+        // Handle button to open sidebar
+        if (handle) {
+            handle.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('📎 Sidebar handle clicked');
+                this.toggleSidebar();
+            });
+        }
+
+        // Desktop: wheel from left edge to open
+        document.addEventListener('wheel', (e) => {
+            if (window.innerWidth <= 768) return; // desktop only
+            if (e.deltaX < -10 && e.clientX < 30) {
+                console.log('🖱️ Edge wheel left → right: open sidebar');
+                this.toggleSidebar();
+            }
+        }, { passive: true });
+
+        // Desktop: mousedown drag from left edge
+        let dragStartX = null;
+        document.addEventListener('mousedown', (e) => {
+            if (e.clientX < 20) dragStartX = e.clientX;
+        });
+        document.addEventListener('mouseup', (e) => {
+            if (dragStartX !== null) {
+                if (e.clientX - dragStartX > 40) {
+                    console.log('🖱️ Drag from left edge detected');
+                    this.toggleSidebar();
+                }
+                dragStartX = null;
+            }
+        });
 
         // Chat input handling
         const promptInput = document.getElementById('prompt-input');
@@ -338,8 +552,17 @@ class AiAssistant {
         if (chatHistory) {
             chatHistory.addEventListener('scroll', () => {
                 this.updateScrollButtonVisibility();
-            });
+            }, { passive: true });
         }
+
+        // Add passive touch listeners for better performance
+        document.addEventListener('touchstart', (e) => {
+            // Touch start handling
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            // Touch move handling
+        }, { passive: true });
 
         // Settings controls
         document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -398,23 +621,44 @@ class AiAssistant {
     }
 
     toggleSidebar() {
+        console.log('🔄 Toggling sidebar...');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         
-        if (sidebar && overlay) {
-            const isOpen = sidebar.classList.contains('open');
+        if (!sidebar || !overlay) {
+            console.error('❌ Sidebar or overlay not found:', { sidebar: !!sidebar, overlay: !!overlay });
+            return;
+        }
+        
+        const isOpen = sidebar.classList.contains('open');
+        console.log('📊 Sidebar state:', { isOpen });
+        
+        if (isOpen) {
+            console.log('🔒 Closing sidebar...');
+            this.closeSidebar();
+        } else {
+            console.log('🔓 Opening sidebar...');
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
             
-            if (isOpen) {
-                this.closeSidebar();
-            } else {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            // Add haptic feedback for mobile
+            this.addHapticFeedback('medium');
+            
+            // Auto-close after 10 seconds on mobile
+            if (this.isMobile) {
+                setTimeout(() => {
+                    if (sidebar.classList.contains('open')) {
+                        console.log('⏰ Auto-closing sidebar after 10s');
+                        this.closeSidebar();
+                    }
+                }, 10000);
             }
         }
     }
 
     closeSidebar() {
+        console.log('🔒 Closing sidebar...');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         
@@ -422,6 +666,9 @@ class AiAssistant {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
             document.body.style.overflow = 'auto';
+            this.addHapticFeedback('light');
+        } else {
+            console.error('❌ Cannot close sidebar - elements not found');
         }
     }
 
@@ -956,3 +1203,38 @@ if ('serviceWorker' in navigator) {
 
 // Export for debugging
 window.AiAssistant = AiAssistant;
+
+// Global test function for mobile features
+window.testMobileFeatures = function() {
+    const ai = window.aiAssistant;
+    console.log('🧪 Testing mobile sidebar functionality...');
+    
+    ai.showToast('📱 MOBILE TEST: Swipe from LEFT EDGE → to open sidebar', 'info');
+    
+    setTimeout(() => {
+        ai.showToast('✋ Try swiping from the very left edge of screen', 'success');
+    }, 2000);
+    
+    setTimeout(() => {
+        console.log('🔄 Auto-testing sidebar toggle...');
+        ai.toggleSidebar();
+    }, 4000);
+    
+    // Test responsiveness
+    setTimeout(() => {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const swipeZone = document.querySelector('.swipe-zone');
+        
+        console.log('📊 Mobile setup check:', {
+            sidebarExists: !!sidebar,
+            overlayExists: !!overlay,
+            swipeZoneExists: !!swipeZone,
+            sidebarWidth: sidebar ? getComputedStyle(sidebar).width : 'N/A',
+            viewportWidth: window.innerWidth + 'px',
+            sidebarTransform: sidebar ? getComputedStyle(sidebar).transform : 'N/A'
+        });
+        
+        ai.showToast('Check console for debug info 📊', 'info');
+    }, 6000);
+};

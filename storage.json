@@ -59,16 +59,26 @@
       "role": "assistant",
       "content": "Sorry, I'm having trouble connecting right now. Please try again later.",
       "timestamp": "2025-09-01T11:54:21.178030"
+    },
+    {
+      "role": "user",
+      "content": "I need help with coding. Can you assist me?",
+      "timestamp": "2025-09-01T20:51:05.909424"
+    },
+    {
+      "role": "assistant",
+      "content": "💻 I'd love to help with coding! I can assist with:\n• **Java** - OOP, Spring, Android development\n• **Python** - Web apps, data science, automation\n• **JavaScript** - Frontend, Node.js, React\n• **HTML/CSS** - Web design and responsive layouts\n• **And many other languages!**\n\nShare your code or describe what you're building, and I'll provide guidance, debugging help, or code examples.",
+      "timestamp": "2025-09-01T20:51:07.865903"
     }
   ],
   "user_name": null,
   "analytics": {
     "total_tasks_created": 0,
     "total_tasks_completed": 0,
-    "total_conversations": 0,
+    "total_conversations": 1,
     "most_productive_day": null,
     "average_tasks_per_day": 0,
     "completion_rate": 0,
-    "last_activity": null
+    "last_activity": "2025-09-01T20:51:07.884501"
   }
 }

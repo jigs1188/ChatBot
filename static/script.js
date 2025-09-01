@@ -321,6 +321,26 @@ class AiAssistant {
             });
         }
 
+        // Scroll to bottom button
+        const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn');
+        if (scrollToBottomBtn) {
+            scrollToBottomBtn.addEventListener('click', () => {
+                this.scrollToBottom();
+                // Add haptic feedback for mobile
+                if (this.isMobile && 'vibrate' in navigator) {
+                    navigator.vibrate(30);
+                }
+            });
+        }
+
+        // Show/hide scroll button based on scroll position
+        const chatHistory = document.getElementById('chat-history');
+        if (chatHistory) {
+            chatHistory.addEventListener('scroll', () => {
+                this.updateScrollButtonVisibility();
+            });
+        }
+
         // Settings controls
         document.querySelectorAll('.theme-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -571,6 +591,21 @@ class AiAssistant {
         const chatHistory = document.querySelector('.chat-history');
         if (chatHistory) {
             chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    }
+
+    updateScrollButtonVisibility() {
+        const chatHistory = document.querySelector('.chat-history');
+        const scrollBtn = document.getElementById('scroll-to-bottom-btn');
+        
+        if (!chatHistory || !scrollBtn) return;
+
+        const isScrolledUp = chatHistory.scrollTop < (chatHistory.scrollHeight - chatHistory.clientHeight - 100);
+        
+        if (isScrolledUp) {
+            scrollBtn.classList.add('visible');
+        } else {
+            scrollBtn.classList.remove('visible');
         }
     }
 

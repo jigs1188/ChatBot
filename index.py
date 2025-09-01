@@ -272,6 +272,11 @@ def serve_sw():
     """Serve service worker"""
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve all static files"""
+    return send_from_directory('static', filename)
+
 @app.route('/api/debug')
 def debug():
     try:

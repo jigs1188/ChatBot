@@ -141,6 +141,16 @@ def prompt():
         error_msg = "I'm having trouble right now. Try a simple command like 'add task' or 'show list'"
         return jsonify({'response': error_msg})
 
+@app.route('/manifest.json')
+def serve_manifest():
+    """Serve PWA manifest"""
+    return send_from_directory('static', 'manifest.json', mimetype='application/json')
+
+@app.route('/sw.js')
+def serve_sw():
+    """Serve service worker"""
+    return send_from_directory('static', 'sw.js', mimetype='application/javascript')
+
 @app.route('/api/debug')
 def debug():
     try:

@@ -156,6 +156,19 @@ def debug():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/handle-file', methods=['POST'])
+def handle_file():
+    """Handle file uploads for PWA"""
+    return jsonify({'message': 'File handling not implemented yet'}), 200
+
+@app.route('/share', methods=['GET'])
+def handle_share():
+    """Handle share target for PWA"""
+    title = request.args.get('title', '')
+    text = request.args.get('text', '')
+    url = request.args.get('url', '')
+    return render_template('index.html')
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Page not found'}), 404

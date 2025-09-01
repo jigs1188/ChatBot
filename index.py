@@ -143,8 +143,130 @@ def prompt():
 
 @app.route('/manifest.json')
 def serve_manifest():
-    """Serve PWA manifest"""
-    return send_from_directory('static', 'manifest.json', mimetype='application/json')
+    """Serve PWA manifest directly"""
+    manifest_data = {
+        "id": "rex-ai-assistant-app",
+        "name": "Rex AI Assistant",
+        "short_name": "Rex",
+        "description": "Your intelligent AI assistant for productivity and task management",
+        "start_url": "/",
+        "display": "standalone",
+        "display_override": ["window-controls-overlay", "standalone"],
+        "background_color": "#0f172a",
+        "theme_color": "#6366f1",
+        "orientation": "portrait-primary",
+        "scope": "/",
+        "lang": "en-US",
+        "dir": "ltr",
+        "categories": ["productivity", "utilities", "business"],
+        "iarc_rating_id": "e84b072d-71de-3dae-a8ea-1234567890ab",
+        "launch_handler": {
+            "client_mode": "focus-existing"
+        },
+        "icons": [
+            {
+                "src": "/static/icon-72.png",
+                "sizes": "72x72",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-96.png",
+                "sizes": "96x96",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-128.png",
+                "sizes": "128x128",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-144.png",
+                "sizes": "144x144",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-152.png",
+                "sizes": "152x152",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-384.png",
+                "sizes": "384x384",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "maskable"
+            },
+            {
+                "src": "/static/icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ],
+        "file_handlers": [
+            {
+                "action": "/handle-file",
+                "accept": {
+                    "text/plain": [".txt"],
+                    "application/json": [".json"]
+                }
+            }
+        ],
+        "share_target": {
+            "action": "/share",
+            "method": "GET",
+            "params": {
+                "title": "title",
+                "text": "text",
+                "url": "url"
+            }
+        },
+        "shortcuts": [
+            {
+                "name": "Add Todo",
+                "short_name": "Add",
+                "description": "Quickly add a new todo item",
+                "url": "/?action=add-todo",
+                "icons": [
+                    {
+                        "src": "/static/icon-96.png",
+                        "sizes": "96x96"
+                    }
+                ]
+            }
+        ],
+        "edge_side_panel": {
+            "preferred_width": 400
+        },
+        "protocol_handlers": []
+    }
+    
+    from flask import jsonify
+    response = jsonify(manifest_data)
+    response.headers['Content-Type'] = 'application/manifest+json'
+    return response
 
 @app.route('/sw.js')
 def serve_sw():

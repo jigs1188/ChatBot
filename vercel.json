@@ -8,6 +8,18 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/static/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/static/sw.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "index.py"
     }

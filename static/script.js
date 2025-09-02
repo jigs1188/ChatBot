@@ -62,6 +62,123 @@ class AiAssistant {
         }
     }
 
+    setupEventListeners() {
+        console.log('🔧 Setting up event listeners...');
+
+        // Setup hamburger menu toggle for mobile
+        const menuToggle = document.getElementById('menu-toggle');
+        if (menuToggle) {
+            console.log('✅ Menu toggle found');
+            menuToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🍔 Hamburger menu clicked');
+                this.toggleSidebar();
+                this.addHapticFeedback('medium');
+            });
+        } else {
+            console.warn('⚠️ Menu toggle not found');
+        }
+
+        // Setup sidebar overlay click to close
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                console.log('📱 Sidebar overlay clicked - closing sidebar');
+                this.closeSidebar();
+            });
+        }
+
+        // Setup close sidebar button
+        const closeSidebar = document.getElementById('close-sidebar');
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', () => {
+                console.log('❌ Close sidebar clicked');
+                this.closeSidebar();
+            });
+        }
+
+        // Setup send message
+        const sendButton = document.getElementById('send-button');
+        const promptInput = document.getElementById('prompt-input');
+        
+        if (sendButton) {
+            sendButton.addEventListener('click', () => {
+                console.log('📤 Send button clicked');
+                this.sendMessage();
+            });
+        }
+
+        if (promptInput) {
+            promptInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+
+            // Auto-resize textarea
+            promptInput.addEventListener('input', () => {
+                this.adjustTextareaHeight(promptInput);
+            });
+        }
+
+        // Setup voice button
+        const voiceBtn = document.getElementById('voice-btn');
+        const voiceToggleBtn = document.getElementById('voice-toggle-btn');
+        
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', () => {
+                console.log('🎤 Voice button clicked');
+                this.toggleVoiceInput();
+            });
+        }
+
+        if (voiceToggleBtn) {
+            voiceToggleBtn.addEventListener('click', () => {
+                console.log('🎤 Voice toggle button clicked');
+                this.toggleVoiceInput();
+            });
+        }
+
+        // Setup settings button
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const modalClose = document.getElementById('modal-close');
+
+        if (settingsBtn && settingsModal) {
+            settingsBtn.addEventListener('click', () => {
+                console.log('⚙️ Settings button clicked');
+                settingsModal.style.display = 'flex';
+            });
+        }
+
+        if (modalClose && settingsModal) {
+            modalClose.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+            });
+        }
+
+        if (settingsModal) {
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) {
+                    settingsModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Setup theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+                this.addHapticFeedback('medium');
+            });
+        }
+
+        console.log('✅ Event listeners setup complete');
+    }
+
     setupMobileInteractions() {
         console.log('📱 Setting up mobile interactions...');
         
@@ -627,9 +744,21 @@ class AiAssistant {
             this.closeSidebar();
         } else {
             console.log('🔓 Opening sidebar...');
-            // Force display for mobile
-            sidebar.style.display = 'block';
-            sidebar.style.visibility = 'visible';
+            
+            // Show sidebar with proper mobile styling
+            if (window.innerWidth <= 768) {
+                sidebar.style.display = 'block';
+                sidebar.style.visibility = 'visible';
+                sidebar.style.position = 'fixed';
+                sidebar.style.top = '60px';
+                sidebar.style.left = '0';
+                sidebar.style.width = '100vw';
+                sidebar.style.height = 'calc(100vh - 60px)';
+                sidebar.style.zIndex = '999';
+                sidebar.style.background = 'rgba(15, 23, 42, 0.98)';
+                sidebar.style.transform = 'translateX(0)';
+            }
+            
             sidebar.classList.add('open');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -637,14 +766,14 @@ class AiAssistant {
             // Add haptic feedback for mobile
             this.addHapticFeedback('medium');
             
-            // Auto-close after 10 seconds on mobile
+            // Auto-close after 15 seconds on mobile
             if (this.isMobile) {
                 setTimeout(() => {
                     if (sidebar.classList.contains('open')) {
-                        console.log('⏰ Auto-closing sidebar after 10s');
+                        console.log('⏰ Auto-closing sidebar after 15s');
                         this.closeSidebar();
                     }
-                }, 10000);
+                }, 15000);
             }
         }
     }
@@ -659,12 +788,13 @@ class AiAssistant {
             overlay.classList.remove('active');
             document.body.style.overflow = 'auto';
             
-            // Hide sidebar again on mobile after closing
+            // Hide sidebar on mobile after closing animation
             if (window.innerWidth <= 768) {
                 setTimeout(() => {
                     sidebar.style.display = 'none';
                     sidebar.style.visibility = 'hidden';
-                }, 400); // Wait for animation to complete
+                    sidebar.style.transform = 'translateX(-100%)';
+                }, 300); // Wait for animation to complete
             }
             
             this.addHapticFeedback('light');

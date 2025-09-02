@@ -1,0 +1,14 @@
+
+{
+  "appId": "app.vercel.rex.ai.assistant",
+  "appName": "Rex AI Assistant",
+  "webDir": "static",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

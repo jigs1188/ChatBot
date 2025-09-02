@@ -158,6 +158,16 @@ class AiAssistant {
                 this.addHapticFeedback('medium');
             });
         }
+
+        // Setup hamburger menu toggle for mobile
+        const menuToggle = document.getElementById('menu-toggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                console.log('🍔 Hamburger menu clicked');
+                this.toggleSidebar();
+                this.addHapticFeedback('medium');
+            });
+        }
     }
 
     addHapticFeedback(intensity = 'light') {
@@ -445,29 +455,8 @@ class AiAssistant {
             });
         }
 
-        // Desktop: wheel from left edge to open
-        document.addEventListener('wheel', (e) => {
-            if (window.innerWidth <= 768) return; // desktop only
-            if (e.deltaX < -10 && e.clientX < 30) {
-                console.log('🖱️ Edge wheel left → right: open sidebar');
-                this.toggleSidebar();
-            }
-        }, { passive: true });
-
-        // Desktop: mousedown drag from left edge
-        let dragStartX = null;
-        document.addEventListener('mousedown', (e) => {
-            if (e.clientX < 20) dragStartX = e.clientX;
-        });
-        document.addEventListener('mouseup', (e) => {
-            if (dragStartX !== null) {
-                if (e.clientX - dragStartX > 40) {
-                    console.log('🖱️ Drag from left edge detected');
-                    this.toggleSidebar();
-                }
-                dragStartX = null;
-            }
-        });
+        // Remove desktop-specific edge detection for cleaner mobile experience
+        // Keep only essential mobile interactions
 
         // Chat input handling
         const promptInput = document.getElementById('prompt-input');
@@ -638,6 +627,9 @@ class AiAssistant {
             this.closeSidebar();
         } else {
             console.log('🔓 Opening sidebar...');
+            // Force display for mobile
+            sidebar.style.display = 'block';
+            sidebar.style.visibility = 'visible';
             sidebar.classList.add('open');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -666,6 +658,15 @@ class AiAssistant {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
             document.body.style.overflow = 'auto';
+            
+            // Hide sidebar again on mobile after closing
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    sidebar.style.display = 'none';
+                    sidebar.style.visibility = 'hidden';
+                }, 400); // Wait for animation to complete
+            }
+            
             this.addHapticFeedback('light');
         } else {
             console.error('❌ Cannot close sidebar - elements not found');

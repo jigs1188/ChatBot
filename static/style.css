@@ -118,6 +118,15 @@ body {
         rgba(30, 41, 59, 0.98) 50%,
         rgba(15, 23, 42, 1) 100%);
     transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden; /* Prevent mobile scroll issues */
+}
+
+/* Mobile: Allow for fixed header */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column !important;
+        padding-top: 0 !important;
+    }
 }
 
 .app-container.loading {
@@ -131,20 +140,23 @@ body {
     transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Mobile Header - Enhanced */
+/* Mobile Header - Hidden by Default (Will be shown via media query) */
 .mobile-header {
     display: none;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(99, 102, 241, 0.3);
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-between;
+    padding: env(safe-area-inset-top, 12px) 16px 12px;
+    box-sizing: border-box;
 }
 
 .header-title {
@@ -1587,7 +1599,10 @@ body {
             transform: translateY(0) scale(1);
         }
     }
-}
+
+
+ 
+
 
 /* Extra small devices - Enhanced Mobile Experience */
 @media (max-width: 480px) {
@@ -2767,5 +2782,222 @@ button:focus-visible, input:focus-visible {
         width: 24px;
         text-align: center;
         opacity: 0.9;
+    }
+}
+
+/* 🎯 REDESIGNED MOBILE LAYOUT - Maximum Chat Space */
+@media (max-width: 768px) {
+    /* COMPLETELY HIDE SIDEBAR ON MOBILE */
+    .sidebar {
+        display: none !important;
+        visibility: hidden !important;
+        transform: translateX(-100%) !important;
+    }
+
+    /* Redesigned Mobile Header - Fixed at Top, Full Width */
+    .mobile-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        height: 60px !important;
+        padding: env(safe-area-inset-top, 12px) 16px 12px !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobile-header-left {
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .mobile-header-center {
+        flex: 1 !important;
+        text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .mobile-header-right {
+        flex: 0 0 auto !important;
+        display: flex !important;
+        gap: 8px !important;
+        align-items: center !important;
+    }
+
+    /* Header Components Styling */
+    .menu-toggle, .header-btn {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15)) !important;
+        border: 1px solid rgba(99, 102, 241, 0.3) !important;
+        color: #e2e8f0 !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        backdrop-filter: blur(10px) !important;
+    }
+
+    .header-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important;
+    }
+
+    .header-title i {
+        font-size: 20px !important;
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        -webkit-background-clip: text !important;
+        -moz-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        -webkit-background-clip: text !important;
+        -moz-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    /* Full Screen Chat Area */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 60px !important; /* Account for fixed header */
+        height: calc(100vh - 60px) !important;
+        padding-top: 0 !important;
+    }
+
+    .chat-container {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .chat-history {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 16px !important;
+        margin-bottom: 80px !important; /* Space for input */
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Full Width Messages */
+    .message {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 8px 0 !important;
+    }
+
+    .message-content {
+        width: 100% !important;
+    }
+
+    .bot-message {
+        align-self: flex-start !important;
+        background: linear-gradient(135deg,
+            rgba(99, 102, 241, 0.1),
+            rgba(139, 92, 246, 0.05)) !important;
+        border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    }
+
+    .user-message {
+        align-self: flex-end !important;
+        background: linear-gradient(135deg,
+            rgba(99, 102, 241, 0.8),
+            rgba(139, 92, 246, 0.8)) !important;
+        color: white !important;
+    }
+
+    /* Hide desktop elements on mobile */
+    .desktop-header,
+    .sidebar-handle,
+    .swipe-zone {
+        display: none !important;
+    }
+
+    /* Enhanced mobile chat input */
+    .chat-input-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border-top: 1px solid rgba(99, 102, 241, 0.2) !important;
+        padding: 12px 16px env(safe-area-inset-bottom, 12px) !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Mobile sidebar overlay when opened */
+    .sidebar.open {
+        display: block !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 60px !important; /* Below header */
+        left: 0 !important;
+        width: 100vw !important;
+        height: calc(100vh - 60px) !important;
+        transform: translateX(0) !important;
+        z-index: 999 !important;
+        background: rgba(15, 23, 42, 0.98) !important;
+    }
+}
+
+/* 🖥️ DESKTOP/TABLET LAYOUT - Keep Original Design */
+@media (min-width: 769px) {
+    /* Hide mobile header on desktop */
+    .mobile-header {
+        display: none !important;
+    }
+
+    /* Show sidebar on desktop */
+    .sidebar {
+        display: block !important;
+        visibility: visible !important;
+        transform: translateX(0) !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 320px;
+        z-index: 200;
+    }
+
+    /* Desktop main content with sidebar */
+    .main-content {
+        margin-left: 320px !important;
+        width: calc(100% - 320px) !important;
+        margin-top: 0 !important;
+        height: 100vh !important;
+    }
+
+    /* Hide mobile-specific elements on desktop */
+    .mobile-header-left,
+    .mobile-header-center,
+    .mobile-header-right {
+        display: none !important;
     }
 }

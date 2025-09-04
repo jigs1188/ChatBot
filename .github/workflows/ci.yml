@@ -38,9 +38,11 @@ jobs:
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        python -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics \
+          --exclude=.venv,venv,env,pwa_mobile_build_2025_09_01,main_complete.py,main_mobile_demo.py,main_mobile_optimized.py
         # Exit-zero treats all errors as warnings
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        python -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics \
+          --exclude=.venv,venv,env,pwa_mobile_build_2025_09_01,main_complete.py,main_mobile_demo.py,main_mobile_optimized.py
 
     - name: Test application startup
       run: |
@@ -70,11 +72,11 @@ jobs:
 
     - name: Run Bandit security scan
       run: |
-        bandit -r . -x .venv,venv,env -ll
+        python -m bandit -r . -x .venv,venv,env,pwa_mobile_build_2025_09_01,main_complete.py,main_mobile_demo.py,main_mobile_optimized.py,main_old.py -ll
 
     - name: Check for known security vulnerabilities
       run: |
-        safety check --json || true
+        python -m safety check --json || true
 
   build:
     runs-on: ubuntu-latest

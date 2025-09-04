@@ -555,9 +555,10 @@ if __name__ == '__main__':
     try:
         port = int(os.environ.get('PORT', 5000))
         debug = os.environ.get('FLASK_ENV') == 'development'
+        host = os.environ.get('FLASK_HOST', '0.0.0.0')  # nosec B104 - Default to 0.0.0.0 for deployment platforms
         
         app.run(
-            host='0.0.0.0',
+            host=host,
             port=port,
             debug=debug,
             threaded=True

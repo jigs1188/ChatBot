@@ -1,6 +1,12 @@
 import json
 import os
-from flask import Flask, render_template,@app.route('/')
+from flask import Flask, render_template, request, jsonify, send_from_directory
+from pathlib import Path
+import traceback
+
+app = Flask(__name__)
+
+@app.route('/')
 def index():
     """Serve the mobile-optimized template"""
     try:
@@ -219,4 +225,8 @@ if __name__ == '__main__':
     print(f"✅ API Key: {'✅ Configured' if api_configured else '❌ Missing'}")
     print(f"🌐 Server starting on http://127.0.0.1:{port}")
     
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV') == 'development'
+    host = os.environ.get('FLASK_HOST', '0.0.0.0')  # nosec B104
+    
+    app.run(host=host, port=port, debug=debug)

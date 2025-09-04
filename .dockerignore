@@ -1,0 +1,78 @@
+# Git
+.git
+.gitignore
+README.md
+.github/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+
+# Development files
+requirements-dev.txt
+.pre-commit-config.yaml
+tox.ini
+
+# Documentation
+docs/
+*.md
+
+# Mobile build files
+android/
+ios/
+capacitor.config.json
+pwa_mobile_build_2025_09_01/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/

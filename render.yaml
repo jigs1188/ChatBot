@@ -1,7 +1,50 @@
 services:
   - type: web
-    name: snello
+    name: rex-ai-assistant
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn main:app"
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
+      pip install gunicorn
+    startCommand: |
+      gunicorn main:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --keep-alive 2 --log-level info
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: WEB_CONCURRENCY
+        value: 2
+    healthCheckPath: /
+    autoDeploy: true
+    
+  # Optional: Add a static site service for better performance
+  - type: static_site
+    name: rex-ai-assistant-static
+    buildCommand: |
+      echo "Preparing static assets..."
+      mkdir -p dist
+      cp -r static/* dist/
+      cp manifest.json dist/
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: redirect
+        source: /manifest.json
+        destination: /static/manifest.json
+      - type: rewrite
+        source: /sw.js
+        destination: /static/sw.js
 

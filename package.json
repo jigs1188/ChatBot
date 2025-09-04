@@ -1,13 +1,32 @@
 {
   "name": "rex-ai-assistant",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Rex AI Assistant - Professional AI-Powered Productivity App with Mobile PWA",
   "main": "main.py",
   "scripts": {
     "start": "python main.py",
     "dev": "python main.py",
-    "build": "echo 'Production build complete'",
-    "deploy": "vercel --prod"
+    "build": "npm run build:css && npm run build:js && echo '✅ Production build complete'",
+    "build:css": "cssnano static/style.css static/style.min.css || cp static/style.css static/style.min.css",
+    "build:js": "terser static/script.js -c -m -o static/script.min.js || cp static/script.js static/script.min.js",
+    "deploy": "vercel --prod",
+    "deploy:staging": "vercel",
+    "lint": "flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics",
+    "lint:fix": "black . && isort .",
+    "test": "python -m pytest",
+    "test:coverage": "python -m pytest --cov=. --cov-report=html",
+    "security": "bandit -r . -x .venv,venv,env",
+    "deps:check": "safety check",
+    "deps:update": "pip list --outdated --format=freeze | grep -v '^-e' | cut -d = -f 1 | xargs -n1 pip install -U",
+    "serve": "python -m http.server 8000 --directory static",
+    "lighthouse": "lhci autorun --collect.url=http://localhost:5000",
+    "clean": "find . -type f -name '*.pyc' -delete && find . -type d -name '__pycache__' -delete",
+    "docker:build": "docker build -t rex-ai-assistant .",
+    "docker:run": "docker run -p 5000:5000 rex-ai-assistant",
+    "capacitor:build": "npm run build && npx cap sync",
+    "capacitor:run:android": "npx cap run android",
+    "android:build": "chmod +x build-android.sh && ./build-android.sh",
+    "pwa:validate": "pwa-asset-generator static/icon.svg static --manifest static/manifest.json"
   },
   "keywords": [
     "ai-assistant",
@@ -19,12 +38,66 @@
     "openrouter",
     "deepseek",
     "todo-management",
-    "responsive-design"
+    "responsive-design",
+    "progressive-web-app",
+    "mobile-first",
+    "python",
+    "javascript",
+    "css",
+    "html5",
+    "modern-web",
+    "spa",
+    "frontend",
+    "backend"
   ],
-  "author": "Your Name",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://github.com/jigs1188"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/jigs1188/ChatBot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jigs1188/ChatBot/issues"
+  },
+  "homepage": "https://rex-ai-assistant.vercel.app",
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.9.0"
+  },
+  "devDependencies": {
+    "cssnano-cli": "^1.0.5",
+    "terser": "^5.19.0",
+    "@lhci/cli": "^0.12.0",
+    "pwa-asset-generator": "^6.3.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ],
+  "pwa": {
+    "name": "Rex AI Assistant",
+    "short_name": "Rex AI",
+    "theme_color": "#6366f1",
+    "background_color": "#0f172a",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "start_url": "/",
+    "scope": "/"
+  },
+  "deployment": {
+    "vercel": {
+      "domains": [
+        "rex-ai-assistant.vercel.app"
+      ]
+    },
+    "render": {
+      "service": "rex-ai-assistant"
+    }
   }
 }

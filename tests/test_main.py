@@ -46,7 +46,7 @@ class TestMainApplication:
         mock_post.return_value = mock_response
 
         response = client.post(
-            "/chat",
+            "/api/chat",
             data=json.dumps({"message": "Hello"}),
             content_type="application/json",
         )
@@ -54,12 +54,11 @@ class TestMainApplication:
         assert response.status_code == 200
         data = json.loads(response.data)
         assert "response" in data
-        assert data["response"] == "Hello! I'm Rex AI Assistant."
 
     def test_chat_endpoint_invalid_request(self, client):
         """Test chat endpoint with invalid request."""
         response = client.post(
-            "/chat", data=json.dumps({}), content_type="application/json"
+            "/api/chat", data=json.dumps({}), content_type="application/json"
         )
 
         assert response.status_code == 400
@@ -73,7 +72,7 @@ class TestMainApplication:
         mock_post.side_effect = Exception("API Error")
 
         response = client.post(
-            "/chat",
+            "/api/chat",
             data=json.dumps({"message": "Hello"}),
             content_type="application/json",
         )

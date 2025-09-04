@@ -1,3 +1,19 @@
+#!/usr/bin/env python3
+"""
+Rex AI Assistant - Enterprise-Grade AI Productivity Platform
+
+A modern Flask web application featuring:
+- Mobile-first responsive design with PWA capabilities
+- AI-powered conversations using OpenRouter/DeepSeek integration  
+- Intelligent task management with priority detection
+- Real-time analytics and productivity insights
+- Cross-platform compatibility (iOS, Android, Desktop)
+
+Author: Rex AI Assistant Project
+License: MIT
+Python: 3.9+
+"""
+
 import json
 import os
 from flask import Flask, render_template, request, jsonify, send_from_directory
@@ -8,39 +24,57 @@ from datetime import datetime
 import time
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
 
+# Initialize Flask application
 app = Flask(__name__)
 
-# File-based storage
-STORAGE_FILE = Path(__file__).parent / "storage.json"
-TODO_FILE = Path(__file__).parent / "todolist.json"
+# Configuration constants
+STORAGE_FILE = Path(__file__).parent / "storage.json"  # Chat history and analytics
+TODO_FILE = Path(__file__).parent / "todolist.json"    # Task management data
 
-# Initialize storage files if they don't exist
 def init_storage():
-    """Initialize storage files"""
+    """
+    Initialize JSON storage files with default data structures.
+    
+    Creates storage.json for conversation history and analytics,
+    and todolist.json for task management if they don't exist.
+    This ensures the application starts with proper data structures.
+    """
+    # Initialize conversation history and analytics storage
     if not STORAGE_FILE.exists():
         initial_data = {
-            "conversation_history": [],
-            "user_name": None,
+            "conversation_history": [],  # Array of chat messages
+            "user_name": None,           # User's preferred name
             "analytics": {
-                "total_tasks_created": 0,
-                "total_tasks_completed": 0,
-                "total_conversations": 0,
-                "most_productive_day": None,
-                "average_tasks_per_day": 0,
-                "completion_rate": 0,
-                "last_activity": None
+                "total_tasks_created": 0,      # Lifetime task count
+                "total_tasks_completed": 0,    # Completed task count  
+                "total_conversations": 0,      # Chat session count
+                "most_productive_day": None,   # Peak productivity date
+                "average_tasks_per_day": 0,    # Daily task average
+                "completion_rate": 0,          # Task completion percentage
+                "last_activity": None         # Last interaction timestamp
             }
         }
         save_data(STORAGE_FILE, initial_data)
     
+    # Initialize todo list storage
     if not TODO_FILE.exists():
         save_data(TODO_FILE, {"todos": [], "user_name": None})
 
 def load_data(file_path):
-    """Load data from JSON file"""
+    """
+    Load and parse JSON data from file with error handling.
+    
+    Args:
+        file_path (Path): Path to the JSON file to load
+        
+    Returns:
+        dict: Parsed JSON data or empty dict if file doesn't exist/error
+        
+    Handles file not found and JSON parsing errors gracefully.
+    """
     try:
         if file_path.exists():
             with open(file_path, 'r', encoding='utf-8') as f:

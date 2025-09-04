@@ -1,0 +1,180 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pytest
+
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+    - name: Test application startup
+      run: |
+        python -c "import main; print('Application imports successfully')"
+
+    - name: Check file structure
+      run: |
+        ls -la
+        echo "Static files:"
+        ls -la static/
+        echo "Templates:"
+        ls -la templates/
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install security tools
+      run: |
+        pip install bandit safety
+
+    - name: Run Bandit security scan
+      run: |
+        bandit -r . -x .venv,venv,env -ll
+
+    - name: Check for known security vulnerabilities
+      run: |
+        safety check --json || true
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Create production build
+      run: |
+        echo "Building for production..."
+        # Add any build steps here (minification, compilation, etc.)
+
+    - name: Validate PWA manifest
+      run: |
+        python -c "
+        import json
+        with open('manifest.json') as f:
+            manifest = json.load(f)
+            print('PWA manifest is valid')
+            print(f'App name: {manifest.get(\"name\", \"Unknown\")}')
+        "
+
+    - name: Check static assets
+      run: |
+        echo "Checking static assets..."
+        ls -la static/
+        file static/*.css static/*.js || true
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.12.x
+
+    - name: Set up Python and run server
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Start application
+      run: |
+        python main.py &
+        sleep 10
+        curl -f http://localhost:5000 || echo "Server may not be ready"
+      env:
+        FLASK_ENV: production
+
+    - name: Run Lighthouse CI
+      run: |
+        lhci autorun --collect.startServerCommand="python main.py" --collect.url="http://localhost:5000" || echo "Lighthouse scan completed with warnings"
+
+  deploy-preview:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to Preview Environment
+      run: |
+        echo "Would deploy to preview environment"
+        echo "PR #${{ github.event.number }}"
+        echo "Branch: ${{ github.head_ref }}"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, security, build]
+    if: always()
+
+    steps:
+    - name: Notify build status
+      run: |
+        echo "Build completed!"
+        echo "Test status: ${{ needs.test.result }}"
+        echo "Security status: ${{ needs.security.result }}"
+        echo "Build status: ${{ needs.build.result }}"

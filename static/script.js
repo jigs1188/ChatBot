@@ -1,11 +1,46 @@
-// Mobile-First AI Assistant - Enhanced JavaScript
+/**
+ * Rex AI Assistant - Mobile-First Progressive Web App
+ * 
+ * Enterprise-grade JavaScript application featuring:
+ * - Touch-optimized mobile interactions with gesture support
+ * - Progressive Web App (PWA) capabilities with offline functionality  
+ * - Real-time AI conversation interface with typing indicators
+ * - Responsive design with glassmorphism UI effects
+ * - Advanced productivity analytics and task management
+ * - Cross-platform compatibility (iOS, Android, Desktop browsers)
+ * 
+ * Key Features:
+ * - Swipe gestures for navigation and task management
+ * - Haptic feedback on supported devices
+ * - Offline-first architecture with service worker caching
+ * - Touch-friendly 44px+ interactive elements
+ * - Accessibility support with ARIA labels and keyboard navigation
+ * 
+ * @version 2.1.0
+ * @author Rex AI Assistant Project
+ * @license MIT
+ */
+
+/**
+ * Main AI Assistant class handling all frontend functionality
+ * Implements mobile-first design patterns and PWA capabilities
+ */
 class AiAssistant {
+    /**
+     * Initialize the AI Assistant with mobile-optimized settings
+     * Sets up touch handling, PWA features, and responsive behaviors
+     */
     constructor() {
+        // Loading and state management
         this.isLoading = false;
         this.chatHistory = [];
+        
+        // User preferences with localStorage persistence
         this.currentTheme = localStorage.getItem('theme') || 'dark';
         this.notificationsEnabled = localStorage.getItem('notifications') === 'true';
         this.voiceEnabled = localStorage.getItem('voice') === 'true';
+        
+        // Analytics and productivity tracking
         this.stats = {
             totalChats: parseInt(localStorage.getItem('totalChats')) || 0,
             completedTasks: parseInt(localStorage.getItem('completedTasks')) || 0,
@@ -13,16 +48,20 @@ class AiAssistant {
             totalProjects: parseInt(localStorage.getItem('totalProjects')) || 1
         };
         
-        // Mobile-specific properties
+        // Mobile-specific touch and gesture handling
         this.isMobile = window.innerWidth <= 768;
-        this.touchStartX = 0;
-        this.touchStartY = 0;
-        this.sessionStartTime = Date.now();
+        this.touchStartX = 0;                    // Touch gesture start X coordinate
+        this.touchStartY = 0;                    // Touch gesture start Y coordinate
+        this.sessionStartTime = Date.now();     // Session timing for analytics
         
-        // Quick initialization without delay
+        // Performance optimization: Initialize core features immediately
         this.quickInit();
     }
 
+    /**
+     * Quick initialization for immediate UI responsiveness
+     * Handles critical UI setup without blocking the main thread
+     */
     async quickInit() {
         try {
             console.log('🔄 Quick initializing mobile-optimized Rex AI...');

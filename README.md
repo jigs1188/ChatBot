@@ -1,11 +1,26 @@
 # 🤖 Rex AI Assistant - Enterprise-Grade AI Productivity Platform
 
+<div align="center">
+
+[![CI/CD Pipeline](https://github.com/jigs1188/ChatBot/workflows/🚀%20CI/CD%20Pipeline/badge.svg)](https://github.com/jigs1188/ChatBot/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/Flask-3.1+-green.svg)](https://flask.palletsprojects.com/)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 [![PWA](https://img.shields.io/badge/PWA-Ready-purple.svg)](https://web.dev/progressive-web-apps/)
 [![Mobile](https://img.shields.io/badge/Mobile-Responsive-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Deployment](https://img.shields.io/badge/Deployed-Vercel-black.svg)](https://vercel.com)
 [![Performance](https://img.shields.io/badge/Lighthouse-95+-green.svg)](https://pagespeed.web.dev/)
+[![WCAG](https://img.shields.io/badge/WCAG-2.1%20AA-brightgreen.svg)](https://www.w3.org/WAI/WCAG21/quickref/)
+
+![GitHub stars](https://img.shields.io/github/stars/jigs1188/ChatBot?style=social)
+![GitHub forks](https://img.shields.io/github/forks/jigs1188/ChatBot?style=social)
+![GitHub issues](https://img.shields.io/github/issues/jigs1188/ChatBot)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/jigs1188/ChatBot)
+![GitHub last commit](https://img.shields.io/github/last-commit/jigs1188/ChatBot)
+
+</div>
 
 > **🎯 Professional Full-Stack AI Application** - Showcasing modern web development skills with enterprise-level architecture, mobile-first design, and advanced AI integration.
 

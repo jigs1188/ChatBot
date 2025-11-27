@@ -1110,7 +1110,20 @@ class AiAssistant {
     scrollToBottom() {
         const chatHistory = document.querySelector('.chat-history');
         if (chatHistory) {
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            // Prefer smooth scroll to the last message element so it respects
+            // container scroll-padding and any bottom padding applied via CSS.
+            const last = chatHistory.lastElementChild;
+            try {
+                if (last && typeof last.scrollIntoView === 'function') {
+                    // Use smooth behavior where supported
+                    last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                }
+            } catch (e) {
+                // Fallback for older browsers
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
         }
     }
 

@@ -1434,8 +1434,8 @@ body {
         box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
         border-radius: 24px 24px 8px 24px;
         position: relative;
-        overflow: hidden;
-    }
+        overflow:hidden;  
+      }
     
     .user-message::before {
         content: '';
@@ -1882,6 +1882,28 @@ body {
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
     }
+}
+
+/* Force visible overflow on message bubbles to avoid vertical clipping */
+.chat-history .message.user-message,
+.chat-history .message.bot-message,
+.chat-history .message {
+    overflow: visible ;
+}
+
+/* Ensure message content wraps and is not clipped */
+.chat-history .message .message-content,
+.chat-history .message p,
+.chat-history .message span {
+    overflow: visible !important;
+    word-break: break-word !important;
+    white-space: pre-wrap !important;
+}
+
+/* If any prior rule sets overflow-x/y to hidden, explicitly allow vertical overflow */
+.chat-history .message {
+    overflow-y: visible !important;
+    overflow-x: hidden !important; /* keep horizontal overflow controlled */
 }
 
 /* Touch-Optimized Interactions */
@@ -3014,7 +3036,7 @@ button:focus-visible, input:focus-visible {
     .chat-history {
         flex: 1 !important;
         overflow-y: auto !important;
-        overflow-x: hidden !important;
+        overflow-x: auto !important;
         padding: 16px !important;
         padding-bottom: 120px !important; /* Space for fixed input + extra padding */
         width: 100% !important;

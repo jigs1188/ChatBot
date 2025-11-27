@@ -104,19 +104,54 @@ class AiAssistant {
     setupEventListeners() {
         console.log('🔧 Setting up event listeners...');
 
+        // Wait for DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.initializeEventListeners();
+            });
+        } else {
+            this.initializeEventListeners();
+        }
+    }
+
+    initializeEventListeners() {
+        console.log('🚀 Initializing event listeners...');
+
         // Setup hamburger menu toggle for mobile
         const menuToggle = document.getElementById('menu-toggle');
         if (menuToggle) {
             console.log('✅ Menu toggle found');
-            menuToggle.addEventListener('click', (e) => {
+            // Remove any existing listeners first
+            menuToggle.removeEventListener('click', this.menuToggleHandler);
+            this.menuToggleHandler = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🍔 Hamburger menu clicked');
+                console.log('🍔 Hamburger menu clicked - Current viewport:', window.innerWidth);
                 this.toggleSidebar();
                 this.addHapticFeedback('medium');
-            });
+            };
+            menuToggle.addEventListener('click', this.menuToggleHandler);
+            menuToggle.addEventListener('touchend', this.menuToggleHandler);
         } else {
             console.warn('⚠️ Menu toggle not found');
+            // Try to find it again after a short delay
+            setTimeout(() => {
+                const menuToggleRetry = document.getElementById('menu-toggle');
+                if (menuToggleRetry) {
+                    console.log('✅ Menu toggle found on retry');
+                    this.menuToggleHandler = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🍔 Hamburger menu clicked (retry)');
+                        this.toggleSidebar();
+                        this.addHapticFeedback('medium');
+                    };
+                    menuToggleRetry.addEventListener('click', this.menuToggleHandler);
+                    menuToggleRetry.addEventListener('touchend', this.menuToggleHandler);
+                } else {
+                    console.error('❌ Menu toggle still not found after retry');
+                }
+            }, 1000);
         }
 
         // Setup sidebar overlay click to close
@@ -126,6 +161,10 @@ class AiAssistant {
                 console.log('📱 Sidebar overlay clicked - closing sidebar');
                 this.closeSidebar();
             });
+            sidebarOverlay.addEventListener('touchend', () => {
+                console.log('📱 Sidebar overlay touched - closing sidebar');
+                this.closeSidebar();
+            });
         }
 
         // Setup close sidebar button
@@ -133,6 +172,10 @@ class AiAssistant {
         if (closeSidebar) {
             closeSidebar.addEventListener('click', () => {
                 console.log('❌ Close sidebar clicked');
+                this.closeSidebar();
+            });
+            closeSidebar.addEventListener('touchend', () => {
+                console.log('❌ Close sidebar touched');
                 this.closeSidebar();
             });
         }
@@ -766,17 +809,34 @@ class AiAssistant {
     }
 
     toggleSidebar() {
-        console.log('🔄 Toggling sidebar...');
+        console.log('🔄 Toggling sidebar...', {
+            isMobile: this.isMobile,
+            viewportWidth: window.innerWidth,
+            userAgent: navigator.userAgent.includes('Mobile')
+        });
+        
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         
         if (!sidebar || !overlay) {
-            console.error('❌ Sidebar or overlay not found:', { sidebar: !!sidebar, overlay: !!overlay });
+            console.error('❌ Sidebar or overlay not found:', { 
+                sidebar: !!sidebar, 
+                overlay: !!overlay,
+                sidebarHTML: sidebar ? 'found' : 'missing',
+                overlayHTML: overlay ? 'found' : 'missing'
+            });
             return;
         }
         
         const isOpen = sidebar.classList.contains('open');
-        console.log('📊 Sidebar state:', { isOpen });
+        console.log('📊 Sidebar state:', { 
+            isOpen, 
+            sidebarClasses: sidebar.className,
+            overlayClasses: overlay.className,
+            currentDisplay: getComputedStyle(sidebar).display,
+            currentVisibility: getComputedStyle(sidebar).visibility,
+            currentTransform: getComputedStyle(sidebar).transform
+        });
         
         if (isOpen) {
             console.log('🔒 Closing sidebar...');
@@ -784,29 +844,62 @@ class AiAssistant {
         } else {
             console.log('🔓 Opening sidebar...');
             
-            // Show sidebar with proper mobile styling
+            // Force show sidebar on mobile regardless of CSS
             if (window.innerWidth <= 768) {
-                sidebar.style.display = 'block';
-                sidebar.style.visibility = 'visible';
-                sidebar.style.position = 'fixed';
-                sidebar.style.top = '60px';
-                sidebar.style.left = '0';
-                sidebar.style.width = '100vw';
-                sidebar.style.height = 'calc(100vh - 60px)';
-                sidebar.style.zIndex = '999';
-                sidebar.style.background = 'rgba(15, 23, 42, 0.98)';
-                sidebar.style.transform = 'translateX(0)';
+                console.log('📱 Mobile detected - applying mobile sidebar styles');
+                
+                // Force override all CSS with important styles
+                sidebar.style.cssText = `
+                    display: block !important;
+                    visibility: visible !important;
+                    position: fixed !important;
+                    top: 60px !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: calc(100vh - 60px) !important;
+                    z-index: 999 !important;
+                    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95)) !important;
+                    backdrop-filter: blur(20px) !important;
+                    transform: translateX(0) !important;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                    overflow-y: auto !important;
+                `;
+                
+                // Also set overlay
+                overlay.style.cssText = `
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    background: rgba(0, 0, 0, 0.5) !important;
+                    z-index: 198 !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    transition: all 0.3s ease !important;
+                `;
             }
             
+            // Add classes for animations
             sidebar.classList.add('open');
             overlay.classList.add('active');
+            
+            // Prevent body scroll on mobile
             document.body.style.overflow = 'hidden';
             
             // Add haptic feedback for mobile
             this.addHapticFeedback('medium');
             
+            console.log('✅ Sidebar should now be visible with styles:', {
+                sidebarDisplay: getComputedStyle(sidebar).display,
+                sidebarVisibility: getComputedStyle(sidebar).visibility,
+                sidebarZIndex: getComputedStyle(sidebar).zIndex,
+                overlayOpacity: getComputedStyle(overlay).opacity,
+                bodyOverflow: document.body.style.overflow
+            });
+            
             // Auto-close after 15 seconds on mobile
-            if (this.isMobile) {
+            if (window.innerWidth <= 768) {
                 setTimeout(() => {
                     if (sidebar.classList.contains('open')) {
                         console.log('⏰ Auto-closing sidebar after 15s');
@@ -818,28 +911,38 @@ class AiAssistant {
     }
 
     closeSidebar() {
-        console.log('🔒 Closing sidebar...');
+        console.log('� Closing sidebar...');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         
-        if (sidebar && overlay) {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            
-            // Hide sidebar on mobile after closing animation
-            if (window.innerWidth <= 768) {
-                setTimeout(() => {
-                    sidebar.style.display = 'none';
-                    sidebar.style.visibility = 'hidden';
-                    sidebar.style.transform = 'translateX(-100%)';
-                }, 300); // Wait for animation to complete
-            }
-            
-            this.addHapticFeedback('light');
-        } else {
-            console.error('❌ Cannot close sidebar - elements not found');
+        if (!sidebar || !overlay) {
+            console.error('❌ Sidebar or overlay not found during close');
+            return;
         }
+        
+        console.log('🔄 Sidebar close state:', { 
+            hasOpenClass: sidebar.classList.contains('open'),
+            overlayActive: overlay.classList.contains('active')
+        });
+        
+        // Remove classes
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        
+        // Clear inline styles on mobile to prevent conflicts
+        if (window.innerWidth <= 768) {
+            console.log('📱 Mobile close - clearing inline styles');
+            sidebar.style.cssText = '';
+            overlay.style.cssText = '';
+        }
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        
+        // Add haptic feedback for mobile
+        this.addHapticFeedback('light');
+        
+        console.log('✅ Sidebar closed, styles cleared');
     }
 
     focusInput() {

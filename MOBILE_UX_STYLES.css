@@ -213,3 +213,31 @@
     transform: scale(0.9);
     box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6);
 }
+
+/* Chat / Message layout fixes to prevent user messages from being cut off */
+.chat-history {
+    /* Ensure there is enough space at the bottom so the last message isn't hidden behind the input bar */
+    padding-bottom: 140px !important;
+    box-sizing: border-box;
+}
+
+/* Target user messages specifically and prevent flex-shrink so content doesn't get truncated */
+.chat-history .message.user-message {
+    align-self: flex-end !important;
+    flex: 0 0 auto !important; /* do not shrink or grow */
+    margin: 10px 12px 20px 16px !important;
+    padding: 12px 18px !important;
+    max-width: 78% !important; /* keep messages narrow on wide screens */
+    word-break: break-word !important;
+    white-space: normal !important;
+}
+
+/* General message bubble adjustments to improve vertical spacing */
+.chat-history .message {
+    margin-bottom: 12px;
+}
+
+/* If a message is the last child, ensure extra bottom spacing so it's visible when scrolled */
+.chat-history .message:last-child {
+    margin-bottom: 140px !important;
+}

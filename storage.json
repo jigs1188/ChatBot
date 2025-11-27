@@ -89,16 +89,76 @@
       "role": "assistant",
       "content": "✨ Creative writing is one of my favorite topics! I can help you:\n• Write stories, poems, or articles\n• Brainstorm ideas\n• Improve existing content\n• Overcome writer's block\n• Create compelling characters and worlds\n\nWhat kind of creative project are you working on?",
       "timestamp": "2025-09-02T01:56:44.236716"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-11-27T18:23:10.093012"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: Unable to fetch response from OpenRouter API.",
+      "timestamp": "2025-11-27T18:23:12.758786"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-11-27T18:26:04.722629"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Invalid API key. Please check your .env file.",
+      "timestamp": "2025-11-27T18:26:07.620546"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-11-27T18:26:41.657863"
+    },
+    {
+      "role": "assistant",
+      "content": "👋 Hello! I'm Rex, your AI assistant. I can help with conversations, manage your todos, assist with coding, creative writing, and much more! What would you like to work on today?",
+      "timestamp": "2025-11-27T18:26:43.709809"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-11-27T18:26:50.536755"
+    },
+    {
+      "role": "assistant",
+      "content": "👋 Hello! I'm Rex, your AI assistant. I can help with conversations, manage your todos, assist with coding, creative writing, and much more! What would you like to work on today?",
+      "timestamp": "2025-11-27T18:26:54.048115"
+    },
+    {
+      "role": "user",
+      "content": "Motivate\n                        me",
+      "timestamp": "2025-11-27T19:14:09.634445"
+    },
+    {
+      "role": "assistant",
+      "content": "✨ I'm Rex, your AI companion! I can help with productivity, creative tasks, coding, or just have a great conversation. How can I assist you today?",
+      "timestamp": "2025-11-27T19:14:12.843031"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-11-27T19:36:04.793374"
+    },
+    {
+      "role": "assistant",
+      "content": "👋 Hello! I'm Rex, your AI assistant. I can help with conversations, manage your todos, assist with coding, creative writing, and much more! What would you like to work on today?",
+      "timestamp": "2025-11-27T19:36:07.669190"
     }
   ],
   "user_name": null,
   "analytics": {
     "total_tasks_created": 0,
     "total_tasks_completed": 0,
-    "total_conversations": 3,
+    "total_conversations": 9,
     "most_productive_day": null,
     "average_tasks_per_day": 0,
     "completion_rate": 0,
-    "last_activity": "2025-09-02T01:56:44.304384"
+    "last_activity": "2025-11-27T19:36:07.740312"
   }
 }

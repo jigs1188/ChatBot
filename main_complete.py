@@ -2,10 +2,8 @@ import json
 import os
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from pathlib import Path
-import traceback
 import requests
 from datetime import datetime
-import time
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -61,45 +59,36 @@ def save_data(file_path, data):
 def get_ai_response(user_input):
     """Get AI response using OpenRouter API or fallback to intelligent responses"""
     try:
-        # Try OpenRouter API first
         api_key = os.getenv("OPENROUTER_API_KEY")
         if api_key:
-            headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            data = {
-                "model": "deepseek/deepseek-chat",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are Rex, an intelligent AI assistant. You help users with conversations, tasks, creativity, coding, and productivity. Be helpful, friendly, and concise. You can also manage todos - when users mention adding tasks, help them organize their work."
-                    },
-                    {
-                        "role": "user", 
-                        "content": user_input
-                    }
-                ]
-            }
-            
-            response = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=data,
-                timeout=30
-            )
-            
-            if response.status_code == 200:
-                result = response.json()
-                return result['choices'][0]['message']['content']
-        
-        # Fallback to intelligent rule-based responses
+            return fetch_openrouter_response(user_input, api_key)
         return get_intelligent_response(user_input)
-        
     except Exception as e:
         print(f"Error getting AI response: {e}")
         return get_intelligent_response(user_input)
+
+def fetch_openrouter_response(user_input, api_key):
+    """Fetch response from OpenRouter API"""
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "deepseek/deepseek-chat",
+        "messages": [
+            {"role": "system", "content": "You are Rex, an intelligent AI assistant."},
+            {"role": "user", "content": user_input}
+        ]
+    }
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json=data,
+        timeout=30
+    )
+    if response.status_code == 200:
+        return response.json()['choices'][0]['message']['content']
+    return "Error: Unable to fetch response from OpenRouter API."
 
 def get_intelligent_response(user_input):
     """Intelligent rule-based responses for core functionality"""
@@ -333,7 +322,6 @@ def chat():
         
     except Exception as e:
         print(f"❌ Chat error: {e}")
-        traceback.print_exc()
         return jsonify({
             "error": f"Failed to process message: {str(e)}",
             "status": "error"
@@ -384,7 +372,6 @@ def prompt_fallback():
         
     except Exception as e:
         print(f"❌ Prompt error: {e}")
-        traceback.print_exc()
         return jsonify({
             "error": f"Failed to process prompt: {str(e)}",
             "status": "error"

@@ -122,7 +122,7 @@ class TestPWAFunctionality:
     
     def test_service_worker(self, client):
         """Test service worker is accessible"""
-        response = client.get('/static/sw.js')
+        response = client.get('/sw.js')
         assert response.status_code in [200, 404]  # May not exist yet
         
         if response.status_code == 200:

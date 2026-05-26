@@ -36,7 +36,7 @@
     },
     {
       "src": "/sw.js",
-      "dest": "/static/sw.js",
+      "dest": "/public/sw.js",
       "headers": {
         "Content-Type": "application/javascript",
         "Cache-Control": "public, max-age=0, must-revalidate"

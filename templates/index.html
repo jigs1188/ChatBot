@@ -272,7 +272,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker
-                    .register('/static/sw.js', { updateViaCache: 'none' })
+                    .register('/sw.js', { updateViaCache: 'none' })
                     .then(async (registration) => {
                         console.log('✅ SW registered');
                         try {

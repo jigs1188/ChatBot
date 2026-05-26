@@ -509,7 +509,8 @@ def manifest():
 @app.route('/sw.js')
 def service_worker():
     """Serve service worker"""
-    return send_from_directory('static', 'sw.js')
+    # Serve the consolidated service worker from the public folder (available at /sw.js)
+    return send_from_directory('public', 'sw.js')
 
 @app.route('/favicon.ico')
 def favicon():

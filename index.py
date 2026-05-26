@@ -270,7 +270,8 @@ def serve_manifest():
 @app.route('/sw.js')
 def serve_sw():
     """Serve service worker"""
-    return send_from_directory('static', 'sw.js', mimetype='application/javascript')
+    # Serve merged service worker from public folder at /sw.js
+    return send_from_directory('public', 'sw.js', mimetype='application/javascript')
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):

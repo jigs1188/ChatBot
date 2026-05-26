@@ -1,12 +1,12 @@
-// Service Worker for Snello AI Assistant PWA
-const CACHE_NAME = 'snello-ai-v1.0.0';
+// Service Worker for Rex AI Assistant PWA (merged from static/sw.js)
+const CACHE_NAME = 'rex-ai-v2.0.0';
 const urlsToCache = [
   '/',
   '/static/style.css',
   '/static/script.js',
   '/static/manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+  '/static/icon-192.png',
+  '/static/icon-512.png'
 ];
 
 // Install event - cache resources
@@ -209,4 +209,4 @@ self.addEventListener('message', (event) => {
   }
 });
 
-console.log('🎯 Service Worker loaded successfully');
+console.log('🎯 Service Worker loaded successfully (Rex AI merged)');

@@ -46,5 +46,5 @@ services:
         destination: /static/manifest.json
       - type: rewrite
         source: /sw.js
-        destination: /static/sw.js
+        destination: /sw.js
 
